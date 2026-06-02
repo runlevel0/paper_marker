@@ -71,6 +71,10 @@ Tools:
 
 The `convert_pdf_to_markdown` tool also supports `keep_temp` for parity with the CLI.
 
+## MCP Testing
+
+See `docs/mcp_testing.md` for smoke checks, MCP contract tests, agent-style behavior tests, and CI tiering.
+
 ## CI/CD and Releases
 
 - CI runs on pull requests and pushes to `main` in `.github/workflows/ci.yml`.
