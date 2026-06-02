@@ -152,18 +152,26 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
 ## ISSUE-009
 - ID: ISSUE-009
 - Severity: High
-- Status: open
+- Status: done
 - Owner: unassigned
 - Evidence:
-  - `core/pipeline.py` worker-failure handler labels crashed futures `route_name="unknown"`, losing attribution because `as_completed` does not map a future to its route.
-  - Selection takes `best_guess = ordered[0]` even when all candidates are `unavailable`/`error`; `final_result.json` then reports a "selected" route with `selection_reason="best guess"` that actually failed.
-  - This partially reopens the spirit of ISSUE-003 for genuine worker crashes (not just invalid route names).
+  - Updated `src/paper_marker/core/pipeline.py` to map submitted futures to route names, so worker exceptions now produce route-attributed `CandidateResult` errors instead of `route_name="unknown"`.
+  - Updated selection logic to derive `best_guess` only from successful candidates and emit `selection_reason="all routes failed"` with `selected_route="none"` when every route fails; this avoids misleading successful-selection metadata and skips writing `final.md`.
+  - Added unit coverage in `tests/unit/test_pipeline.py`:
+    - `test_orchestrator_attributes_worker_failure_to_route`
+    - `test_orchestrator_reports_all_routes_failed`
+    - plus deterministic worker stubbing in `test_orchestrator_writes_candidate_bundle_and_best_guess` to avoid environment-dependent route availability.
+  - Commit: to be filled after commit creation.
 - Fix Plan:
   - Map each submitted future to its route name and use it in failure results.
   - Add an explicit "all routes failed" terminal state distinct from a successful selection; avoid writing a misleading `final.md`/report.
 - Verification:
-  - Unit test: a worker raising an exception yields a result tagged with the correct route.
-  - Unit test: when no candidate succeeds, the run reports failure rather than a "best guess".
+  - `uv run --no-sync pytest tests/unit/test_pipeline.py` -> passed (`6 passed`), including:
+    - worker exception attribution test
+    - all-routes-failed terminal-state test
+  - `uv run --no-sync ruff check .` -> fails due pre-existing lint in unrelated integration files and one initial long-line issue in `tests/unit/test_pipeline.py` that was fixed in this change.
+  - `uv run --no-sync ruff format --check .` -> fails due pre-existing format drift in unrelated files, and includes `src/paper_marker/core/pipeline.py` / `tests/unit/test_pipeline.py` in the global list because repository-wide formatting is not currently clean.
+  - `uv run --no-sync pytest -m "not integration"` -> fails during collection in pre-existing integration modules (`ModuleNotFoundError: No module named 'tests'` in `tests/integration/test_mcp_agent_style_flows.py` and `tests/integration/test_mcp_contracts.py`).
 - Done Criteria:
   - Failures are attributed to the correct route.
   - No misleading selection is reported when every route fails.

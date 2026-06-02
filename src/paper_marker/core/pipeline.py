@@ -89,29 +89,28 @@ class ConversionOrchestrator:
         if unknown_routes:
             known_routes = ", ".join(sorted(ROUTE_REGISTRY))
             unknown_display = ", ".join(unknown_routes)
-            raise ValueError(
-                f"Unknown routes: {unknown_display}. Known routes are: {known_routes}"
-            )
+            raise ValueError(f"Unknown routes: {unknown_display}. Known routes are: {known_routes}")
         max_workers = max(1, min(len(request.routes), self.settings.max_parallel_routes))
         with ProcessPoolExecutor(max_workers=max_workers) as executor:
-            futures = [
+            future_to_route = {
                 executor.submit(
                     _run_route_worker,
                     route_name,
                     str(request.pdf_path),
                     str(work_dir),
                     request.timeout_per_route_s,
-                )
+                ): route_name
                 for route_name in request.routes
-            ]
-            for future in as_completed(futures):
+            }
+            for future in as_completed(list(future_to_route)):
+                route_name = future_to_route[future]
                 try:
                     data = future.result(timeout=request.timeout_per_route_s + 30)
                     results.append(_from_dict(data))
                 except Exception as exc:  # noqa: BLE001
                     results.append(
                         CandidateResult(
-                            route_name="unknown",
+                            route_name=route_name,
                             status="error",
                             error=f"Worker failure: {exc}",
                         )
@@ -134,27 +133,31 @@ class ConversionOrchestrator:
                 )
 
         ordered = sorted(results, key=_score_candidate, reverse=True)
-        best_guess = ordered[0] if ordered else CandidateResult(route_name="none", status="error")
+        successful_candidates = [candidate for candidate in ordered if candidate.status == "ok"]
+        best_guess = (
+            successful_candidates[0]
+            if successful_candidates
+            else CandidateResult(route_name="none", status="error")
+        )
         selected_route = best_guess.route_name
         selected_markdown_path: Path | None = None
         synthesis_result = None
         final_markdown = best_guess.markdown_text
-        selection_reason = "best guess"
+        selection_reason = "best guess" if successful_candidates else "all routes failed"
 
         if request.synthesize:
-            successful_candidates = [candidate for candidate in ordered if candidate.status == "ok"]
             if not successful_candidates:
-                raise ValueError(
-                    "Synthesis requested but no successful candidate outputs were produced"
+                selected_route = "none"
+                final_markdown = ""
+            else:
+                synthesis_result = synthesize_candidates(
+                    successful_candidates,
+                    settings=self.settings,
+                    model=request.openrouter_model,
                 )
-            synthesis_result = synthesize_candidates(
-                successful_candidates,
-                settings=self.settings,
-                model=request.openrouter_model,
-            )
-            final_markdown = synthesis_result.markdown_text
-            selected_route = "synthesized"
-            selection_reason = "llm synthesis"
+                final_markdown = synthesis_result.markdown_text
+                selected_route = "synthesized"
+                selection_reason = "llm synthesis"
 
         if final_markdown:
             selected_markdown_path = request.out_dir / "final.md"
