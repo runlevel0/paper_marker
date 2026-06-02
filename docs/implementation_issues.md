@@ -266,6 +266,7 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
     - `PAPER_MARKER_SYNTH_HTTP_BACKOFF_SECONDS` (default `1.0`)
   - Updated `src/paper_marker/synthesis/openrouter_synth.py` to retry transient synthesis HTTP failures (`429`, `500`, `502`, `503`, `504`) with exponential backoff and bounded attempts.
   - Added `tests/unit/test_synthesis.py::test_synthesize_candidates_retries_transient_http_status` to verify a transient `429` is retried and then succeeds.
+  - Commit: `0472526`.
 - Fix Plan:
   - Add bounded retry with backoff for transient HTTP errors in `openrouter_synth.py`.
 - Verification:
