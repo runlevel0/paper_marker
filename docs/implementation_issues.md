@@ -161,7 +161,7 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
     - `test_orchestrator_attributes_worker_failure_to_route`
     - `test_orchestrator_reports_all_routes_failed`
     - plus deterministic worker stubbing in `test_orchestrator_writes_candidate_bundle_and_best_guess` to avoid environment-dependent route availability.
-  - Commit: to be filled after commit creation.
+  - Commit: `d2f2e76`.
 - Fix Plan:
   - Map each submitted future to its route name and use it in failure results.
   - Add an explicit "all routes failed" terminal state distinct from a successful selection; avoid writing a misleading `final.md`/report.
