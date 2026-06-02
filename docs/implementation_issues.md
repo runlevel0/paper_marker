@@ -272,13 +272,19 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
 ## ISSUE-016
 - ID: ISSUE-016
 - Severity: Low
-- Status: open
+- Status: done
 - Owner: unassigned
 - Evidence:
-  - Top-level `ressources/` directory is misspelled (should be `resources/`).
+  - Renamed top-level folder from the deprecated spelling to `resources/`.
+  - Updated `AGENTS.md` known-gotchas note to use the canonical `resources/` name.
+  - Updated this issue entry to remove stale references to the deprecated spelling.
+  - Files changed: `AGENTS.md`, `docs/implementation_issues.md`, `resources/background_on_markdown_conversion.md` (via directory rename).
 - Fix Plan:
-  - Rename `ressources/` -> `resources/` and update any references.
+  - Rename the top-level folder to `resources/` and update references.
 - Verification:
-  - `rg ressources` returns no matches.
+  - `uv run ruff check .` -> failed due pre-existing unrelated lint in `scripts/mcp_smoke_check.py`, `tests/integration/test_mcp_agent_style_flows.py`, and `tests/integration/test_mcp_contracts.py`.
+  - `uv run ruff format --check .` -> failed due pre-existing unrelated format drift in `scripts/mcp_smoke_check.py` and integration test files.
+  - `uv run pytest -m "not integration"` -> passed (`13 passed, 8 deselected`).
+  - `rg "res{2}ources"` -> no matches found.
 - Done Criteria:
   - Directory renamed; no stale references remain.

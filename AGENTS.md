@@ -94,7 +94,7 @@ This repo uses a file-based ledger instead of GitHub issues: **`docs/implementat
   worker arguments picklable (current code passes strings/paths). Heavy ML deps make worker startup slow.
 - **Worker failure attribution:** crashed futures are currently mislabeled `route_name="unknown"`,
   and a run with all routes failing still reports a misleading "best guess" (ISSUE-009).
-- **Folder name `ressources/`** is a known misspelling (ISSUE-016).
+- **Folder name `resources/`** is canonical (ISSUE-016 resolved).
 
 ## Configuration / environment variables
 
