@@ -1,0 +1,137 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  quality-gate:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --group dev --extra llm
+
+      - name: Lint with Ruff
+        run: uv run ruff check .
+
+      - name: Check formatting
+        run: uv run ruff format --check .
+
+      - name: Run tests
+        run: uv run pytest -m "not integration"
+
+  build:
+    name: Build and validate release
+    runs-on: ubuntu-latest
+    needs: quality-gate
+    outputs:
+      package_version: ${{ steps.get_version.outputs.package_version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build tools
+        run: python -m pip install --upgrade build
+
+      - name: Validate tag matches package version
+        id: get_version
+        shell: python
+        run: |
+          import os
+          import tomllib
+
+          ref = os.environ["GITHUB_REF_NAME"]
+          tag = ref.removeprefix("v")
+          with open("pyproject.toml", "rb") as f:
+              package_version = tomllib.load(f)["project"]["version"]
+
+          if package_version != tag:
+              raise SystemExit(
+                  f"Tag version '{tag}' does not match pyproject version '{package_version}'."
+              )
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write(f"package_version={package_version}\n")
+
+      - name: Verify version does not already exist on PyPI
+        shell: python
+        run: |
+          import json
+          import urllib.error
+          import urllib.request
+
+          package = "paper-marker"
+          version = "${{ steps.get_version.outputs.package_version }}"
+          url = f"https://pypi.org/pypi/{package}/{version}/json"
+
+          try:
+              with urllib.request.urlopen(url) as response:  # noqa: S310
+                  if response.status == 200:
+                      raise SystemExit(
+                          f"{package} version {version} already exists on PyPI."
+                      )
+          except urllib.error.HTTPError as exc:
+              if exc.code == 404:
+                  pass
+              else:
+                  raise SystemExit(
+                      f"Unable to verify package version on PyPI: HTTP {exc.code}"
+                  ) from exc
+          except urllib.error.URLError as exc:
+              raise SystemExit(f"Unable to reach PyPI: {exc}") from exc
+
+      - name: Build distribution artifacts
+        run: python -m build
+
+      - name: Upload distribution artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: dist/
+
+  publish-pypi:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: write
+      contents: read
+    environment:
+      name: pypi
+      url: https://pypi.org/p/paper-marker
+    steps:
+      - name: Download distribution artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: python-dist
+          path: dist/
+
+      - name: Publish to PyPI (trusted publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
