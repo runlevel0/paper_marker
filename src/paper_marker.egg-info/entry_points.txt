@@ -1,0 +1,3 @@
+[console_scripts]
+paper-marker = paper_marker.cli:app
+paper-marker-mcp = paper_marker.mcp.server:main
