@@ -135,11 +135,12 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
 ## ISSUE-008
 - ID: ISSUE-008
 - Severity: Medium
-- Status: open
+- Status: done
 - Owner: unassigned
 - Evidence:
   - `src/paper_marker.egg-info/` is tracked (e.g. `PKG-INFO`) and shows as modified in `git status`.
   - `.gitignore` does not exclude `*.egg-info/`.
+  - Added `*.egg-info/` to `.gitignore` and removed `src/paper_marker.egg-info` from the index via `git rm -r --cached` (commit `be527c5`).
 - Fix Plan:
   - Add `*.egg-info/` to `.gitignore`.
   - `git rm -r --cached src/paper_marker.egg-info`.
