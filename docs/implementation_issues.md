@@ -258,14 +258,22 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
 ## ISSUE-015
 - ID: ISSUE-015
 - Severity: Low
-- Status: open
+- Status: done
 - Owner: unassigned
 - Evidence:
-  - Synthesis HTTP uses `raise_for_status()` with no retry/backoff; a single transient 429/5xx aborts the run after all conversion work is done.
+  - Added configurable synthesis retry settings in `src/paper_marker/config.py`:
+    - `PAPER_MARKER_SYNTH_HTTP_MAX_RETRIES` (default `2`)
+    - `PAPER_MARKER_SYNTH_HTTP_BACKOFF_SECONDS` (default `1.0`)
+  - Updated `src/paper_marker/synthesis/openrouter_synth.py` to retry transient synthesis HTTP failures (`429`, `500`, `502`, `503`, `504`) with exponential backoff and bounded attempts.
+  - Added `tests/unit/test_synthesis.py::test_synthesize_candidates_retries_transient_http_status` to verify a transient `429` is retried and then succeeds.
 - Fix Plan:
   - Add bounded retry with backoff for transient HTTP errors in `openrouter_synth.py`.
 - Verification:
-  - Unit test simulating a transient failure then success.
+  - `uv run --no-sync pytest tests/unit/test_synthesis.py -k retries_transient_http_status` -> `1 passed, 2 deselected`
+  - `uv run --no-sync ruff check .` -> fails due pre-existing unrelated lint in `scripts/mcp_smoke_check.py` and integration tests.
+  - `uv run --no-sync ruff format --check .` -> fails due pre-existing unrelated format drift in `scripts/mcp_smoke_check.py` and integration tests.
+  - `uv run --no-sync pytest -m "not integration"` -> `14 passed, 8 deselected`.
+  - `uv run --no-sync pytest tests/unit/test_synthesis.py` -> `3 passed`.
 - Done Criteria:
   - Transient synthesis errors are retried within configured bounds.
 

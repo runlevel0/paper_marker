@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from dataclasses import asdict
 from typing import Any
 
@@ -9,6 +10,11 @@ from paper_marker.config import AppSettings
 from paper_marker.core.models import CandidateResult, SynthesisResult
 
 PROMPT_VERSION = "v1"
+_TRANSIENT_HTTP_STATUS_CODES = {429, 500, 502, 503, 504}
+
+
+def _is_transient_http_error(error: httpx.HTTPStatusError) -> bool:
+    return error.response.status_code in _TRANSIENT_HTTP_STATUS_CODES
 
 
 def _truncate_text(text: str, max_chars: int) -> tuple[str, bool]:
@@ -94,10 +100,30 @@ def synthesize_candidates(
         "Content-Type": "application/json",
     }
 
+    max_attempts = settings.synth_http_max_retries + 1
+    response: httpx.Response | None = None
     with httpx.Client(timeout=120.0) as client:
-        response = client.post(url, json=payload, headers=headers)
-        response.raise_for_status()
-        data = response.json()
+        for attempt in range(1, max_attempts + 1):
+            try:
+                response = client.post(url, json=payload, headers=headers)
+                response.raise_for_status()
+                data = response.json()
+                break
+            except httpx.HTTPStatusError as error:
+                if attempt == max_attempts or not _is_transient_http_error(error):
+                    raise
+            except httpx.HTTPError:
+                if attempt == max_attempts:
+                    raise
+
+            backoff_seconds = settings.synth_http_backoff_seconds * (2 ** (attempt - 1))
+            if backoff_seconds > 0:
+                time.sleep(backoff_seconds)
+        else:
+            raise RuntimeError("Synthesis HTTP retry loop exited unexpectedly")
+
+    if response is None:
+        raise RuntimeError("Synthesis HTTP request did not produce a response")
 
     choice = data["choices"][0]["message"]["content"]
     usage = data.get("usage", {})

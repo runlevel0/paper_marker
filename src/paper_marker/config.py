@@ -19,6 +19,10 @@ class AppSettings(BaseSettings):
         default=12000, alias="PAPER_MARKER_SYNTH_MAX_CHARS_PER_CANDIDATE"
     )
     synth_max_total_chars: int = Field(default=30000, alias="PAPER_MARKER_SYNTH_MAX_TOTAL_CHARS")
+    synth_http_max_retries: int = Field(default=2, alias="PAPER_MARKER_SYNTH_HTTP_MAX_RETRIES")
+    synth_http_backoff_seconds: float = Field(
+        default=1.0, alias="PAPER_MARKER_SYNTH_HTTP_BACKOFF_SECONDS"
+    )
 
     def resolved_api_key(self) -> str | None:
         return self.openrouter_api_key or self.openai_api_key
