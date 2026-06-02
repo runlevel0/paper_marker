@@ -51,6 +51,9 @@ dev = [
 pythonpath = [
   "src",
 ]
+markers = [
+  "integration: marks tests that require integration dependencies or local fixtures",
+]
 
 [tool.ruff]
 line-length = 100

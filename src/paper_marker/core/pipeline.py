@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
@@ -84,6 +85,13 @@ class ConversionOrchestrator:
         results: list[CandidateResult] = []
         if not request.routes:
             raise ValueError("At least one conversion route must be provided")
+        unknown_routes = sorted(set(request.routes) - set(ROUTE_REGISTRY))
+        if unknown_routes:
+            known_routes = ", ".join(sorted(ROUTE_REGISTRY))
+            unknown_display = ", ".join(unknown_routes)
+            raise ValueError(
+                f"Unknown routes: {unknown_display}. Known routes are: {known_routes}"
+            )
         max_workers = max(1, min(len(request.routes), self.settings.max_parallel_routes))
         with ProcessPoolExecutor(max_workers=max_workers) as executor:
             futures = [
@@ -177,4 +185,6 @@ class ConversionOrchestrator:
             json.dumps(final_result.to_json_dict(), indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
+        if not request.keep_temp:
+            shutil.rmtree(work_dir, ignore_errors=True)
         return final_result

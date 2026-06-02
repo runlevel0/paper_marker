@@ -1,3 +1,9 @@
+"""Domain runtime models are dataclass-based by policy.
+
+Pydantic is reserved for configuration/env parsing in `paper_marker.config`.
+See `docs/modeling_policy.md` for details.
+"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
@@ -50,6 +56,7 @@ class SynthesisResult:
     provider: str
     prompt_version: str
     usage: dict[str, Any] = field(default_factory=dict)
+    prompt_budget: dict[str, Any] = field(default_factory=dict)
     raw_response: dict[str, Any] = field(default_factory=dict)
 
 
@@ -87,4 +94,5 @@ class ConversionRequest:
     timeout_per_route_s: int
     synthesize: bool
     export_candidate_bundle: bool = True
+    keep_temp: bool = False
     openrouter_model: str | None = None

@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from paper_marker.config import AppSettings
 from paper_marker.core.models import ConversionRequest
 from paper_marker.core.pipeline import ConversionOrchestrator
@@ -85,3 +87,46 @@ def test_orchestrator_allows_disabling_candidate_bundle(monkeypatch: Any, tmp_pa
 
     assert result.bundle_dir is None
     assert not (Path(result.output_dir) / "candidate_bundle").exists()
+
+
+def test_orchestrator_keeps_work_dir_when_requested(monkeypatch: Any, tmp_path: Path) -> None:
+    import paper_marker.core.pipeline as pipeline_module
+
+    monkeypatch.setattr(pipeline_module, "ProcessPoolExecutor", _DummyExecutor)
+    monkeypatch.setattr(pipeline_module, "as_completed", lambda futures: futures)
+
+    request = ConversionRequest(
+        pdf_path=tmp_path / "input.pdf",
+        out_dir=tmp_path / "out",
+        routes=["markitdown"],
+        timeout_per_route_s=10,
+        synthesize=False,
+        export_candidate_bundle=False,
+        keep_temp=True,
+    )
+    request.pdf_path.write_text("fake pdf", encoding="utf-8")
+
+    orchestrator = ConversionOrchestrator(settings=AppSettings())
+    _ = orchestrator.run(request)
+
+    assert (request.out_dir / "_work").exists()
+
+
+def test_orchestrator_rejects_unknown_route(monkeypatch: Any, tmp_path: Path) -> None:
+    import paper_marker.core.pipeline as pipeline_module
+
+    monkeypatch.setattr(pipeline_module, "ProcessPoolExecutor", _DummyExecutor)
+    monkeypatch.setattr(pipeline_module, "as_completed", lambda futures: futures)
+
+    request = ConversionRequest(
+        pdf_path=tmp_path / "input.pdf",
+        out_dir=tmp_path / "out",
+        routes=["does-not-exist"],
+        timeout_per_route_s=10,
+        synthesize=False,
+    )
+    request.pdf_path.write_text("fake pdf", encoding="utf-8")
+
+    orchestrator = ConversionOrchestrator(settings=AppSettings())
+    with pytest.raises(ValueError, match="Unknown routes"):
+        orchestrator.run(request)

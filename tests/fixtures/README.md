@@ -14,4 +14,26 @@ Target source categories for fixtures:
 - math-heavy documents
 - table-heavy documents
 
-This file tracks intended fixture provenance for reproducible quality validation.
+Concrete upstream starting points:
+- Marker: <https://github.com/datalab-to/marker>
+- MinerU: <https://github.com/opendatalab/MinerU>
+- Nougat: <https://github.com/facebookresearch/nougat>
+- MarkItDown: <https://github.com/microsoft/markitdown>
+
+Real fixture execution model:
+- Use `tests/fixtures/fixture_catalog.example.json` as the template for a local fixture catalog.
+- Copy it to a real catalog path and point `PAPER_MARKER_FIXTURE_CATALOG` to it.
+- Integration tests will run real converter checks only when this catalog exists and route CLIs are available.
+
+Curated web-sourced candidates:
+- `tests/fixtures/fixture_catalog.curated.json` contains starter candidates from official library docs/tests first, then broader PDF+Markdown sources.
+- To materialize local PDFs from that catalog:
+  - `uv run python scripts/fetch_fixtures.py --catalog tests/fixtures/fixture_catalog.curated.json`
+- Then run integration validation by pointing:
+  - `PAPER_MARKER_FIXTURE_CATALOG=tests/fixtures/fixture_catalog.curated.json`
+
+Catalog URL validation:
+- Validate links before download:
+  - `uv run python scripts/validate_fixture_catalog.py --catalog tests/fixtures/fixture_catalog.curated.json`
+- Optionally write a report:
+  - `uv run python scripts/validate_fixture_catalog.py --catalog tests/fixtures/fixture_catalog.curated.json --output tests/fixtures/fixture_catalog_validation.json`

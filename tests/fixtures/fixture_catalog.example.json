@@ -1,0 +1,34 @@
+[
+  {
+    "id": "marker-born-digital-example",
+    "category": "born-digital",
+    "route": "marker",
+    "pdf_path": "tests/fixtures/pdfs/born-digital-example.pdf",
+    "source": "https://github.com/datalab-to/marker",
+    "golden_fragments": ["# ", "$"]
+  },
+  {
+    "id": "mineru-math-heavy-example",
+    "category": "math-heavy",
+    "route": "mineru",
+    "pdf_path": "tests/fixtures/pdfs/math-heavy-example.pdf",
+    "source": "https://github.com/opendatalab/MinerU",
+    "golden_fragments": ["$$", "##"]
+  },
+  {
+    "id": "nougat-scanned-example",
+    "category": "scanned",
+    "route": "nougat",
+    "pdf_path": "tests/fixtures/pdfs/scanned-example.pdf",
+    "source": "https://github.com/facebookresearch/nougat",
+    "golden_fragments": ["#"]
+  },
+  {
+    "id": "markitdown-table-heavy-example",
+    "category": "table-heavy",
+    "route": "markitdown",
+    "pdf_path": "tests/fixtures/pdfs/table-heavy-example.pdf",
+    "source": "https://github.com/microsoft/markitdown",
+    "golden_fragments": ["|"]
+  }
+]

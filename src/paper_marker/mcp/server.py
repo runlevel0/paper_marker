@@ -40,7 +40,9 @@ def convert_pdf_to_markdown(
     synthesize: bool = False,
     openrouter_model: str | None = None,
     export_candidate_bundle: bool = True,
+    keep_temp: bool = False,
 ) -> dict[str, Any]:
+    # CLI/MCP parity: both interfaces expose temp workspace retention controls.
     settings = load_settings()
     orchestrator = ConversionOrchestrator(settings=settings)
     request = ConversionRequest(
@@ -50,6 +52,7 @@ def convert_pdf_to_markdown(
         timeout_per_route_s=timeout_per_route_s,
         synthesize=synthesize,
         export_candidate_bundle=export_candidate_bundle,
+        keep_temp=keep_temp,
         openrouter_model=openrouter_model,
     )
     return orchestrator.run(request).to_json_dict()

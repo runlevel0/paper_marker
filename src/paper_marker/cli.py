@@ -45,6 +45,7 @@ def convert(
     export_candidate_bundle: Annotated[
         bool, typer.Option("--export-candidate-bundle/--no-candidate-bundle")
     ] = True,
+    keep_temp: Annotated[bool, typer.Option("--keep-temp")] = False,
 ) -> None:
     settings = load_settings()
     orchestrator = ConversionOrchestrator(settings=settings)
@@ -55,6 +56,7 @@ def convert(
         timeout_per_route_s=timeout_per_route,
         synthesize=synthesize,
         export_candidate_bundle=export_candidate_bundle,
+        keep_temp=keep_temp,
         openrouter_model=openrouter_model,
     )
     result = orchestrator.run(request)
