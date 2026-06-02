@@ -279,6 +279,7 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
   - Updated `AGENTS.md` known-gotchas note to use the canonical `resources/` name.
   - Updated this issue entry to remove stale references to the deprecated spelling.
   - Files changed: `AGENTS.md`, `docs/implementation_issues.md`, `resources/background_on_markdown_conversion.md` (via directory rename).
+  - Commit: `b806056`.
 - Fix Plan:
   - Rename the top-level folder to `resources/` and update references.
 - Verification:
