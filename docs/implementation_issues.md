@@ -137,7 +137,7 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
   - `.github/workflows/ci.yml`, `mcp-tests.yml`, and `publish.yml` plus `docs/release.md` are tracked on branch `main` (default branch; `origin/HEAD` -> `origin/main`).
   - Workflow triggers use `main` for push/PR CI and tag-based publish; aligned with `CONTRIBUTING.md` branch conventions.
   - Removed stale ISSUE-007/008/009 gotchas from `AGENTS.md` (CI and egg-info items were already resolved in tree).
-  - Commit: `PLACEHOLDER`.
+  - Commit: `8cf81a6`.
 - Fix Plan:
   - Commit `.github/` and `docs/release.md`.
   - Reconcile branch naming: rename `master` -> `main` or update workflow triggers to `master`.
