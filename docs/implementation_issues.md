@@ -121,7 +121,7 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
   - Added MIT `LICENSE` (copyright Patrick Simon, 2026).
   - Expanded `pyproject.toml` with `license = "MIT"`, `authors`, `keywords`, Trove classifiers (no duplicate License classifier per PEP 639), and `[project.urls]` pointing at `https://github.com/runlevel0/paper_marker`.
   - Updated `AGENTS.md` gotcha and `CHANGELOG.md` Unreleased notes.
-  - Commit: `e41ebf1`.
+  - Commit: `6a26aaa`.
 - Fix Plan:
   - Choose and add a `LICENSE` file (e.g. MIT/Apache-2.0).
   - Add `license`, `authors`, `classifiers`, `keywords`, and `[project.urls]` to `pyproject.toml`.
