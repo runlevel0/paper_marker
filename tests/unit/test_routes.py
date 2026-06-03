@@ -63,9 +63,7 @@ def test_route_is_available_when_cli_resolves(
 ) -> None:
     del route_name
     module = _route_module_name(route_cls)
-    _patch_resolve(
-        monkeypatch, module, _resolve_cli(cli_name)
-    )
+    _patch_resolve(monkeypatch, module, _resolve_cli(cli_name))
     route = route_cls()
     available, note = route.is_available()
     assert available is True
@@ -120,9 +118,7 @@ def test_convert_success_reads_markdown_output(
     tmp_path: Path,
 ) -> None:
     module = _route_module_name(route_cls)
-    _patch_resolve(
-        monkeypatch, module, _resolve_cli(cli_name)
-    )
+    _patch_resolve(monkeypatch, module, _resolve_cli(cli_name))
 
     def _run_success(
         cmd: list[str],
@@ -167,9 +163,7 @@ def test_convert_error_when_cli_returns_nonzero(
 ) -> None:
     del route_name
     module = _route_module_name(route_cls)
-    _patch_resolve(
-        monkeypatch, module, _resolve_cli(cli_name)
-    )
+    _patch_resolve(monkeypatch, module, _resolve_cli(cli_name))
 
     def _run_failure(
         cmd: list[str],
@@ -205,9 +199,7 @@ def test_convert_timeout(
 ) -> None:
     del route_name
     module = _route_module_name(route_cls)
-    _patch_resolve(
-        monkeypatch, module, _resolve_cli(cli_name)
-    )
+    _patch_resolve(monkeypatch, module, _resolve_cli(cli_name))
 
     def _run_timeout(
         cmd: list[str],
