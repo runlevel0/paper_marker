@@ -20,7 +20,7 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
     over `DEFAULT_ROUTES`) plus full-matrix coverage in `test_real_fixture_conversion_matrix`.
   - Added CI-safe catalog structure tests in `tests/unit/test_fixture_catalog.py`.
   - Ignored generated/local fixture artifacts (`tests/fixtures/pdfs/`, validation report JSON).
-  - Commit: (pending).
+  - Commit: `37df95d`.
 - Fix Plan:
   - Add fixture-backed integration tests for converter routes.
   - Include multiple source categories and provenance notes.
