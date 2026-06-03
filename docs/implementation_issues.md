@@ -235,7 +235,7 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
   - Added `.env.example` with all `config.py` aliases plus `PAPER_MARKER_FIXTURE_CATALOG` for integration tests.
   - Added `CHANGELOG.md` with Unreleased and 0.1.0 sections.
   - Expanded README Configuration to a full env-var table (10 settings).
-  - Commit: `21c7a82`.
+  - Commit: `2f544e2`.
 - Fix Plan:
   - Add `CONTRIBUTING.md` (dev workflow, lint/test commands, branch conventions).
   - Add `.env.example` listing all supported env vars.
