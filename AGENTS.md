@@ -85,15 +85,11 @@ This repo uses a file-based ledger instead of GitHub issues: **`docs/implementat
 
 ## Known gotchas
 
-- **Branch/CI mismatch:** repo default branch is `master`, but `.github/workflows/*` trigger on
-  `main` and are currently **untracked** — CI does not run yet (ISSUE-007).
-- **Do not commit build artifacts:** `src/paper_marker.egg-info/` is currently tracked by mistake;
-  it should be gitignored (ISSUE-008).
+- **Do not commit build artifacts:** `*.egg-info/` and `build/` are gitignored; run `uv build`
+  locally without committing those outputs.
 - **No `LICENSE`** and thin `pyproject.toml` metadata — do not publish to PyPI until fixed (ISSUE-006).
 - **Windows + `ProcessPoolExecutor`:** workers re-import the package and use spawn semantics; keep
   worker arguments picklable (current code passes strings/paths). Heavy ML deps make worker startup slow.
-- **Worker failure attribution:** crashed futures are currently mislabeled `route_name="unknown"`,
-  and a run with all routes failing still reports a misleading "best guess" (ISSUE-009).
 - **Folder name `resources/`** is canonical (ISSUE-016 resolved).
 
 ## Configuration / environment variables

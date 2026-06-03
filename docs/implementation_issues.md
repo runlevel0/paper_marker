@@ -131,17 +131,22 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
 ## ISSUE-007
 - ID: ISSUE-007
 - Severity: High
-- Status: open
+- Status: done
 - Owner: unassigned
 - Evidence:
-  - `.github/workflows/ci.yml` and `publish.yml` are untracked, so CI does not run on the remote.
-  - `docs/release.md` is untracked.
-  - Workflows trigger on branch `main`, but the repo's default branch is `master`; CI would not fire on the default branch even once committed.
+  - `.github/workflows/ci.yml`, `mcp-tests.yml`, and `publish.yml` plus `docs/release.md` are tracked on branch `main` (default branch; `origin/HEAD` -> `origin/main`).
+  - Workflow triggers use `main` for push/PR CI and tag-based publish; aligned with `CONTRIBUTING.md` branch conventions.
+  - Removed stale ISSUE-007/008/009 gotchas from `AGENTS.md` (CI and egg-info items were already resolved in tree).
+  - Commit: `PLACEHOLDER`.
 - Fix Plan:
   - Commit `.github/` and `docs/release.md`.
   - Reconcile branch naming: rename `master` -> `main` or update workflow triggers to `master`.
 - Verification:
-  - CI run appears on a push/PR to the default branch.
+  - `git branch --show-current` -> `main`
+  - `git ls-files .github docs/release.md` -> `ci.yml`, `mcp-tests.yml`, `publish.yml`, `docs/release.md`
+  - `.\.venv\Scripts\python.exe -m ruff check .` -> All checks passed!
+  - `.\.venv\Scripts\python.exe -m ruff format --check .` -> 28 files already formatted
+  - `.\.venv\Scripts\python.exe -m pytest -m "not integration" -q` -> `20 passed, 12 deselected in 4.69s`
 - Done Criteria:
   - CI executes lint + tests on the default branch and on PRs.
 
