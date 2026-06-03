@@ -84,8 +84,12 @@ Under `--out-dir` the pipeline writes:
 | Artifact | Description |
 | --- | --- |
 | `{route}.md` | Markdown from each successful route (e.g. `marker.md`, `markitdown.md`) |
+| `{route}_assets/` | Figures and other non-markdown files copied from the route workspace (when present) |
 | `synthesized.md` | LLM-merged Markdown when `--synthesize` succeeds |
 | `_work/` | Intermediate route workspaces (only with `--keep-temp`) |
+
+Relative image and asset links in `{route}.md` are rewritten to point at `{route}_assets/` so
+markdown renders without `--keep-temp`.
 
 Failed routes do not produce a markdown file. `convert` prints the full run JSON (candidates, selection, paths, timing) to stdout; that metadata is not duplicated on disk.
 

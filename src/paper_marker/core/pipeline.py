@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from paper_marker.config import AppSettings
+from paper_marker.core.assets import publish_route_assets
 from paper_marker.core.models import (
     CandidateMetrics,
     CandidateResult,
@@ -122,6 +123,14 @@ class ConversionOrchestrator:
                             error=f"Worker failure: {exc}",
                         )
                     )
+
+        published_results: list[CandidateResult] = []
+        for candidate in results:
+            route_work_dir = work_dir / candidate.route_name
+            published_results.append(
+                publish_route_assets(candidate, route_work_dir, request.out_dir)
+            )
+        results = published_results
 
         route_markdown_paths: dict[str, str] = {}
         for candidate in results:

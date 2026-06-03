@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Route asset publishing: copy non-markdown outputs to `{route}_assets/` and rewrite relative
+  image paths in `{route}.md` so figures render without `--keep-temp`
 - CLI command and option help text, MCP tool docstrings, and expanded README (doctor, routes, outputs, MCP setup)
 - MIT `LICENSE` and complete PyPI project metadata (`license`, authors, classifiers, keywords, URLs)
 - Contributor documentation (`CONTRIBUTING.md`), environment template (`.env.example`), and this changelog

@@ -290,6 +290,48 @@ def test_orchestrator_attributes_worker_failure_to_route(monkeypatch: Any, tmp_p
     assert "boom for markitdown" in (result.candidate_results[0].error or "")
 
 
+def test_orchestrator_publishes_route_assets(monkeypatch: Any, tmp_path: Path) -> None:
+    import paper_marker.core.pipeline as pipeline_module
+
+    def _worker_with_assets(
+        route_name: str, pdf_path: str, work_dir: str, timeout_s: int
+    ) -> dict[str, Any]:
+        _ = (pdf_path, timeout_s)
+        route_work = Path(work_dir) / route_name
+        route_work.mkdir(parents=True, exist_ok=True)
+        (route_work / "plot.png").write_bytes(b"png")
+        markdown = "# Figure\n\n![](plot.png)\n"
+        (route_work / "doc.md").write_text(markdown, encoding="utf-8")
+        return CandidateResult(
+            route_name=route_name,
+            status="ok",
+            markdown_text=markdown,
+        ).to_json_dict()
+
+    monkeypatch.setattr(pipeline_module, "ProcessPoolExecutor", _DummyExecutor)
+    monkeypatch.setattr(pipeline_module, "as_completed", lambda futures: futures)
+    monkeypatch.setattr(pipeline_module, "_run_route_worker", _worker_with_assets)
+
+    request = ConversionRequest(
+        pdf_path=tmp_path / "input.pdf",
+        out_dir=tmp_path / "out",
+        routes=["marker"],
+        timeout_per_route_s=10,
+        synthesize=False,
+    )
+    request.pdf_path.write_text("fake pdf", encoding="utf-8")
+
+    orchestrator = ConversionOrchestrator(settings=AppSettings())
+    result = orchestrator.run(request)
+
+    assets_dir = request.out_dir / "marker_assets"
+    assert (assets_dir / "plot.png").exists()
+    route_md = request.out_dir / "marker.md"
+    assert "![](marker_assets/plot.png)" in route_md.read_text(encoding="utf-8")
+    assert result.candidate_results[0].assets
+    assert not (request.out_dir / "_work").exists()
+
+
 def test_orchestrator_reports_all_routes_failed(monkeypatch: Any, tmp_path: Path) -> None:
     import paper_marker.core.pipeline as pipeline_module
 
