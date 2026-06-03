@@ -28,6 +28,7 @@ uv sync --extra all --extra llm # include all route extras
 uv run pytest -m "not integration"  # default test run (what CI runs)
 uv run ruff check .
 uv run ruff format --check .
+uv run mypy src
 ```
 
 ## Code conventions
@@ -35,7 +36,7 @@ uv run ruff format --check .
 - Target **Python 3.11+**. Keep `from __future__ import annotations` at the top of modules.
 - **Type hints are required** on public functions/methods.
 - **Ruff** is the linter/formatter: line length 100, rules `E,F,I,UP,B,SIM`, `target-version = py311`.
-  Use ruff formatting style. There is no Black/mypy/pyright configured yet (type checking is a tracked gap).
+  Use ruff formatting style. **mypy** type-checks `src/` (config in `pyproject.toml`; CI enforces `uv run mypy src`).
 - When using matplotlib (if ever needed), prefer the object-oriented API.
 - Keep imports at the top of files; avoid inline imports.
 

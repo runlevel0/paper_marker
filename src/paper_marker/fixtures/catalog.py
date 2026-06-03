@@ -14,7 +14,11 @@ SMOKE_ROOT = Path("tests/fixtures/smoke")
 
 
 def load_catalog(path: Path) -> list[dict[str, Any]]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    data: object = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, list):
+        msg = f"Fixture catalog must be a JSON array: {path}"
+        raise ValueError(msg)
+    return data
 
 
 def catalog_entry_paths(entry: dict[str, Any], workspace_root: Path) -> tuple[Path, Path | None]:
@@ -25,7 +29,11 @@ def catalog_entry_paths(entry: dict[str, Any], workspace_root: Path) -> tuple[Pa
 
 
 def smoke_output_dir(entry: dict[str, Any], workspace_root: Path) -> Path:
-    return workspace_root / SMOKE_ROOT / entry["id"] / "output"
+    entry_id = entry["id"]
+    if not isinstance(entry_id, str):
+        msg = "Fixture catalog entry id must be a string"
+        raise ValueError(msg)
+    return workspace_root / SMOKE_ROOT / entry_id / "output"
 
 
 def _ensure_parent(path: Path) -> None:

@@ -4,7 +4,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from paper_marker.core.models import CandidateMetrics, CandidateResult
+from paper_marker.core.models import CandidateMetrics, CandidateResult, RouteStatus
 from paper_marker.routes.base import ConversionRoute
 from paper_marker.routes.cli_discovery import resolve_cli_executable
 
@@ -43,7 +43,7 @@ class MarkItDownRoute(ConversionRoute):
             markdown_text = completed.stdout if completed.returncode == 0 else ""
             if markdown_text:
                 out_file.write_text(markdown_text, encoding="utf-8")
-            status = "ok" if completed.returncode == 0 else "error"
+            status: RouteStatus = "ok" if completed.returncode == 0 else "error"
             error = None if status == "ok" else completed.stderr[-2000:]
             metrics = CandidateMetrics.from_markdown(markdown_text) if markdown_text else None
             return CandidateResult(

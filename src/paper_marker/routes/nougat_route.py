@@ -4,7 +4,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from paper_marker.core.models import CandidateMetrics, CandidateResult
+from paper_marker.core.models import CandidateMetrics, CandidateResult, RouteStatus
 from paper_marker.routes.base import ConversionRoute
 from paper_marker.routes.cli_discovery import resolve_cli_executable
 
@@ -43,7 +43,7 @@ class NougatRoute(ConversionRoute):
             markdown_files = sorted(out_dir.glob("*.md"))
             if markdown_files:
                 markdown_text = markdown_files[0].read_text(encoding="utf-8", errors="ignore")
-            status = "ok" if completed.returncode == 0 else "error"
+            status: RouteStatus = "ok" if completed.returncode == 0 else "error"
             error = None if status == "ok" else completed.stderr[-2000:]
             metrics = CandidateMetrics.from_markdown(markdown_text) if markdown_text else None
             return CandidateResult(

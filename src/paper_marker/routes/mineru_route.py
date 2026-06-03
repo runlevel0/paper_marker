@@ -4,32 +4,44 @@ import subprocess
 import time
 from pathlib import Path
 
-from paper_marker.core.models import CandidateMetrics, CandidateResult
+from paper_marker.core.models import CandidateMetrics, CandidateResult, RouteStatus
 from paper_marker.routes.base import ConversionRoute
 from paper_marker.routes.cli_discovery import resolve_cli_executable
+
+_MINERU_CLI_NAMES = ("mineru", "magic-pdf")
+
+
+def _resolve_mineru_cli() -> tuple[str, str] | None:
+    """Return (executable path, CLI name) for MinerU / legacy magic-pdf."""
+    for cli_name in _MINERU_CLI_NAMES:
+        if executable := resolve_cli_executable(cli_name):
+            return executable, cli_name
+    return None
 
 
 class MinerURoute(ConversionRoute):
     name = "mineru"
 
     def is_available(self) -> tuple[bool, str]:
-        executable = resolve_cli_executable("magic-pdf")
-        if executable:
-            return True, f"Found magic-pdf CLI at {executable}"
-        return False, "magic-pdf CLI not found on PATH or in the paper-marker environment"
+        resolved = _resolve_mineru_cli()
+        if resolved:
+            executable, cli_name = resolved
+            return True, f"Found {cli_name} CLI at {executable}"
+        return False, "mineru or magic-pdf CLI not found on PATH or in the paper-marker environment"
 
     def convert(self, pdf_path: Path, work_dir: Path, timeout_s: int) -> CandidateResult:
         start = time.perf_counter()
         out_dir = work_dir / self.name
         out_dir.mkdir(parents=True, exist_ok=True)
-        executable = resolve_cli_executable("magic-pdf")
-        if not executable:
+        resolved = _resolve_mineru_cli()
+        if not resolved:
             return CandidateResult(
                 route_name=self.name,
                 status="unavailable",
-                error="magic-pdf CLI not found on PATH or in the paper-marker environment",
+                error="mineru or magic-pdf CLI not found on PATH or in the paper-marker environment",
                 elapsed_s=time.perf_counter() - start,
             )
+        executable, _cli_name = resolved
         cmd = [executable, "-p", str(pdf_path), "-o", str(out_dir)]
         try:
             completed = subprocess.run(
@@ -43,7 +55,7 @@ class MinerURoute(ConversionRoute):
             markdown_files = sorted(out_dir.glob("*.md"))
             if markdown_files:
                 markdown_text = markdown_files[0].read_text(encoding="utf-8", errors="ignore")
-            status = "ok" if completed.returncode == 0 else "error"
+            status: RouteStatus = "ok" if completed.returncode == 0 else "error"
             error = None if status == "ok" else completed.stderr[-2000:]
             metrics = CandidateMetrics.from_markdown(markdown_text) if markdown_text else None
             return CandidateResult(
