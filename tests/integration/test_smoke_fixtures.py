@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 from pathlib import Path
 
@@ -39,13 +38,9 @@ def test_smoke_fixture_persists_output_artifacts() -> None:
             continue
 
         out_dir = smoke_output_dir(entry, WORKSPACE_ROOT)
-        assert (out_dir / "final.md").exists(), f"Missing final.md for {entry['id']}"
-        assert (out_dir / "run_report.json").exists(), f"Missing run_report.json for {entry['id']}"
-        assert (out_dir / "final_result.json").exists(), (
-            f"Missing final_result.json for {entry['id']}"
-        )
-        report = json.loads((out_dir / "run_report.json").read_text(encoding="utf-8"))
-        assert report["selected_route"] == entry["route"]
+        route_md = out_dir / f"{entry['route']}.md"
+        assert route_md.exists(), f"Missing {route_md.name} for {entry['id']}"
+        assert route_md.read_text(encoding="utf-8").strip()
         executed += 1
         break
 

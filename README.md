@@ -71,12 +71,6 @@ Enable LLM synthesis (requires `OPENROUTER_API_KEY` or `OPENAI_API_KEY`):
 paper-marker convert path\to\paper.pdf --out-dir .\out --synthesize --openrouter-model openrouter/auto
 ```
 
-Disable candidate bundle output:
-
-```powershell
-paper-marker convert path\to\paper.pdf --out-dir .\out --no-candidate-bundle
-```
-
 Keep intermediate route artifacts in `_work`:
 
 ```powershell
@@ -89,13 +83,11 @@ Under `--out-dir` the pipeline writes:
 
 | Artifact | Description |
 | --- | --- |
-| `final.md` | Selected or synthesized Markdown (when any route succeeds) |
-| `final_result.json` | Full run payload (candidates, selection, synthesis metadata) |
-| `run_report.json` | Timing and selection summary |
-| `candidate_bundle/` | Per-route Markdown and metadata (unless `--no-candidate-bundle`) |
+| `{route}.md` | Markdown from each successful route (e.g. `marker.md`, `markitdown.md`) |
+| `synthesized.md` | LLM-merged Markdown when `--synthesize` succeeds |
 | `_work/` | Intermediate route workspaces (only with `--keep-temp`) |
 
-`convert` prints the same `final_result` JSON to stdout.
+Failed routes do not produce a markdown file. `convert` prints the full run JSON (candidates, selection, paths, timing) to stdout; that metadata is not duplicated on disk.
 
 ## Configuration
 
@@ -146,7 +138,6 @@ Or after `uv tool install`, use `paper-marker-mcp` on your `PATH`.
 | `timeout_per_route_s` | no | `300` | Per-route timeout in seconds |
 | `synthesize` | no | `false` | LLM merge when API key is set |
 | `openrouter_model` | no | env default | Model override for synthesis |
-| `export_candidate_bundle` | no | `true` | Set `false` to skip `candidate_bundle/` |
 | `keep_temp` | no | `false` | Keep `_work/` after the run |
 
 ### Sample client configuration

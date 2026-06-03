@@ -33,41 +33,6 @@ def test_cli_convert_requires_out_dir(tmp_path: Path) -> None:
     assert "out-dir" in result.output.lower() or "out_dir" in result.output.lower()
 
 
-def test_cli_convert_flag_for_candidate_bundle(monkeypatch: Any, tmp_path: Path) -> None:
-    from paper_marker import cli as cli_module
-    from paper_marker.core.models import FinalResult
-
-    class DummyOrchestrator:
-        def __init__(self, settings: Any):
-            _ = settings
-            self.captured_request = None
-
-        def run(self, request: Any) -> FinalResult:
-            self.captured_request = request
-            return FinalResult(
-                input_pdf=str(request.pdf_path),
-                output_dir=str(request.out_dir),
-                candidate_results=[],
-                selected_route="best guess",
-                selected_markdown_path=None,
-                bundle_dir=None,
-            )
-
-    dummy = DummyOrchestrator(settings=None)
-    monkeypatch.setattr(cli_module, "ConversionOrchestrator", lambda settings: dummy)
-
-    pdf_path = tmp_path / "doc.pdf"
-    pdf_path.write_text("dummy", encoding="utf-8")
-    runner = CliRunner()
-    result = runner.invoke(
-        app,
-        ["convert", str(pdf_path), "--out-dir", str(tmp_path / "out"), "--no-candidate-bundle"],
-    )
-    assert result.exit_code == 0
-    assert dummy.captured_request is not None
-    assert dummy.captured_request.export_candidate_bundle is False
-
-
 def test_cli_convert_keep_temp_flag(monkeypatch: Any, tmp_path: Path) -> None:
     from paper_marker import cli as cli_module
     from paper_marker.core.models import FinalResult
@@ -83,9 +48,8 @@ def test_cli_convert_keep_temp_flag(monkeypatch: Any, tmp_path: Path) -> None:
                 input_pdf=str(request.pdf_path),
                 output_dir=str(request.out_dir),
                 candidate_results=[],
-                selected_route="best guess",
+                selected_route="markitdown",
                 selected_markdown_path=None,
-                bundle_dir=None,
             )
 
     dummy = DummyOrchestrator(settings=None)
@@ -129,7 +93,6 @@ def test_mcp_convert_tool_reuses_pipeline(monkeypatch: Any, tmp_path: Path) -> N
     payload = mcp_server.convert_pdf_to_markdown(
         pdf_path=str(tmp_path / "paper.pdf"),
         out_dir=str(tmp_path / "out"),
-        export_candidate_bundle=False,
         keep_temp=True,
     )
     assert payload["selection_reason"] == "best guess"
@@ -161,7 +124,7 @@ def test_cli_help_documents_commands_and_convert_options() -> None:
         "subprocess timeout",
         "OpenRouter",
         "openrouter/auto",
-        "candidate_bundle",
+        "synthesized.md",
         "_work/",
     ):
         assert fragment in convert_help.stdout

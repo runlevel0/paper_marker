@@ -82,7 +82,6 @@ def run_smoke_entry(
     *,
     settings: AppSettings | None = None,
     timeout_per_route_s: int = 300,
-    export_candidate_bundle: bool = True,
 ) -> FinalResult:
     pdf_path, _ = catalog_entry_paths(entry, workspace_root)
     if not pdf_path.exists():
@@ -103,7 +102,6 @@ def run_smoke_entry(
         routes=[route_name],
         timeout_per_route_s=timeout_per_route_s,
         synthesize=False,
-        export_candidate_bundle=export_candidate_bundle,
     )
     result = orchestrator.run(request)
     produced = ""

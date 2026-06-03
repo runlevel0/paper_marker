@@ -38,7 +38,6 @@ def _run_fixture_conversion(
         routes=[fixture["route"]],
         timeout_per_route_s=300,
         synthesize=False,
-        export_candidate_bundle=True,
     )
     result = orchestrator.run(request)
     assert result.candidate_results, f"No candidate results for fixture {fixture['id']}"

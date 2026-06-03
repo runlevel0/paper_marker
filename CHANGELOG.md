@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** convert disk output is flat: `{route}.md` per successful route, optional
+  `synthesized.md` with `--synthesize`; removed `final.md`, `final_result.json`,
+  `run_report.json`, `candidate_bundle/`, and `--export-candidate-bundle` /
+  `--no-candidate-bundle`. Run metadata remains in CLI/MCP JSON stdout only.
 - **Breaking:** `paper-marker convert` requires `--out-dir`; the implicit default `out/` was removed.
 - **Breaking:** MCP `convert_pdf_to_markdown` requires `out_dir`; the implicit default `"out"` was removed.
 - Switched issue tracking from the markdown ledger to [GitHub Issues](https://github.com/runlevel0/paper_marker/issues); historical entries archived under `docs/archive/`.

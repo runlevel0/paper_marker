@@ -41,19 +41,17 @@ def convert_pdf_to_markdown(
     timeout_per_route_s: int = 300,
     synthesize: bool = False,
     openrouter_model: str | None = None,
-    export_candidate_bundle: bool = True,
     keep_temp: bool = False,
 ) -> dict[str, Any]:
     """Convert a PDF to Markdown using parallel routes; mirrors the paper-marker convert CLI.
 
     Args:
         pdf_path: Path to the input PDF file.
-        out_dir: Output directory for final.md, JSON reports, and optional bundles (required).
+        out_dir: Output directory for per-route Markdown and optional synthesized.md (required).
         routes: Route names to run; defaults to marker, mineru, nougat, markitdown.
         timeout_per_route_s: Per-route subprocess timeout in seconds.
         synthesize: When true, merge successful candidates via OpenRouter/OpenAI-compatible API.
         openrouter_model: Optional synthesis model override (e.g. openrouter/auto).
-        export_candidate_bundle: Write per-route artifacts under candidate_bundle/ when true.
         keep_temp: Retain intermediate route workspace under _work/ after the run when true.
     """
     settings = load_settings()
@@ -64,7 +62,6 @@ def convert_pdf_to_markdown(
         routes=routes or DEFAULT_ROUTES,
         timeout_per_route_s=timeout_per_route_s,
         synthesize=synthesize,
-        export_candidate_bundle=export_candidate_bundle,
         keep_temp=keep_temp,
         openrouter_model=openrouter_model,
     )

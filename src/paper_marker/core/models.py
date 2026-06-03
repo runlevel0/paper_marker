@@ -67,10 +67,11 @@ class FinalResult:
     candidate_results: list[CandidateResult]
     selected_route: str
     selected_markdown_path: str | None
-    bundle_dir: str | None
+    route_markdown_paths: dict[str, str] = field(default_factory=dict)
     synthesis_result: SynthesisResult | None = None
     created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     selection_reason: str = "best guess"
+    elapsed_s: float = 0.0
 
     def to_json_dict(self) -> dict[str, Any]:
         return {
@@ -79,10 +80,11 @@ class FinalResult:
             "candidate_results": [candidate.to_json_dict() for candidate in self.candidate_results],
             "selected_route": self.selected_route,
             "selected_markdown_path": self.selected_markdown_path,
-            "bundle_dir": self.bundle_dir,
+            "route_markdown_paths": self.route_markdown_paths,
             "synthesis_result": asdict(self.synthesis_result) if self.synthesis_result else None,
             "created_at": self.created_at,
             "selection_reason": self.selection_reason,
+            "elapsed_s": self.elapsed_s,
         }
 
 
@@ -93,6 +95,5 @@ class ConversionRequest:
     routes: list[str]
     timeout_per_route_s: int
     synthesize: bool
-    export_candidate_bundle: bool = True
     keep_temp: bool = False
     openrouter_model: str | None = None

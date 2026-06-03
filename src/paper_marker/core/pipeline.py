@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import shutil
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -64,6 +63,14 @@ def _from_dict(data: dict[str, Any]) -> CandidateResult:
     )
 
 
+def _write_route_markdown(out_dir: Path, candidate: CandidateResult) -> Path | None:
+    if candidate.status != "ok" or not candidate.markdown_text:
+        return None
+    path = out_dir / f"{candidate.route_name}.md"
+    path.write_text(candidate.markdown_text, encoding="utf-8")
+    return path
+
+
 class ConversionOrchestrator:
     def __init__(self, settings: AppSettings):
         self.settings = settings
@@ -116,21 +123,11 @@ class ConversionOrchestrator:
                         )
                     )
 
-        bundle_dir: Path | None = None
-        if request.export_candidate_bundle:
-            bundle_dir = request.out_dir / "candidate_bundle"
-            bundle_dir.mkdir(parents=True, exist_ok=True)
-            for candidate in results:
-                route_dir = bundle_dir / candidate.route_name
-                route_dir.mkdir(parents=True, exist_ok=True)
-                markdown_path = route_dir / f"{candidate.route_name}.md"
-                if candidate.markdown_text:
-                    markdown_path.write_text(candidate.markdown_text, encoding="utf-8")
-                meta_path = route_dir / "metadata.json"
-                meta_path.write_text(
-                    json.dumps(candidate.to_json_dict(), indent=2, ensure_ascii=False),
-                    encoding="utf-8",
-                )
+        route_markdown_paths: dict[str, str] = {}
+        for candidate in results:
+            path = _write_route_markdown(request.out_dir, candidate)
+            if path is not None:
+                route_markdown_paths[candidate.route_name] = str(path)
 
         ordered = sorted(results, key=_score_candidate, reverse=True)
         successful_candidates = [candidate for candidate in ordered if candidate.status == "ok"]
@@ -158,35 +155,23 @@ class ConversionOrchestrator:
                 final_markdown = synthesis_result.markdown_text
                 selected_route = "synthesized"
                 selection_reason = "llm synthesis"
+                if final_markdown:
+                    selected_markdown_path = request.out_dir / "synthesized.md"
+                    selected_markdown_path.write_text(final_markdown, encoding="utf-8")
+        elif best_guess.route_name in route_markdown_paths:
+            selected_markdown_path = Path(route_markdown_paths[best_guess.route_name])
 
-        if final_markdown:
-            selected_markdown_path = request.out_dir / "final.md"
-            selected_markdown_path.write_text(final_markdown, encoding="utf-8")
-
-        report = {
-            "elapsed_s": time.perf_counter() - start,
-            "selection_reason": selection_reason,
-            "selected_route": selected_route,
-            "candidate_count": len(results),
-        }
-        (request.out_dir / "run_report.json").write_text(
-            json.dumps(report, indent=2, ensure_ascii=False),
-            encoding="utf-8",
-        )
-
+        elapsed_s = time.perf_counter() - start
         final_result = FinalResult(
             input_pdf=str(request.pdf_path),
             output_dir=str(request.out_dir),
             candidate_results=results,
             selected_route=selected_route,
             selected_markdown_path=str(selected_markdown_path) if selected_markdown_path else None,
-            bundle_dir=str(bundle_dir) if bundle_dir else None,
+            route_markdown_paths=route_markdown_paths,
             synthesis_result=synthesis_result,
             selection_reason=selection_reason,
-        )
-        (request.out_dir / "final_result.json").write_text(
-            json.dumps(final_result.to_json_dict(), indent=2, ensure_ascii=False),
-            encoding="utf-8",
+            elapsed_s=elapsed_s,
         )
         if not request.keep_temp:
             shutil.rmtree(work_dir, ignore_errors=True)

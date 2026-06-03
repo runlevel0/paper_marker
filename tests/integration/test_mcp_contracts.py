@@ -94,7 +94,6 @@ def test_convert_pdf_to_markdown_input_validation_error(mcp_server: McpServerPro
             "out_dir": "out",
             "routes": ["fallback"],
             "timeout_per_route_s": 1,
-            "export_candidate_bundle": False,
         },
     )
     assert isinstance(payload, list | str | dict)

@@ -52,8 +52,8 @@ uv run ruff format --check .
   `ConversionRoute` (`base.py`) with `is_available()` and `convert()`.
 - `src/paper_marker/synthesis/openrouter_synth.py` — LLM synthesis over httpx.
 
-**Outputs of a run:** `final.md`, `final_result.json`, `run_report.json`, optional
-`candidate_bundle/`, and `_work/` (kept only with `--keep-temp`).
+**Outputs of a run:** flat `{route}.md` per successful route, optional `synthesized.md`
+when synthesizing, `_work/` only with `--keep-temp`. Run metadata is CLI/MCP JSON only.
 
 ## Modeling policy (important)
 

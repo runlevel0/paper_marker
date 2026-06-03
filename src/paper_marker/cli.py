@@ -51,7 +51,7 @@ def convert(
         Path,
         typer.Option(
             "--out-dir",
-            help="Output directory for final.md, JSON reports, and optional bundles.",
+            help="Output directory for per-route Markdown files and optional synthesized.md.",
         ),
     ],
     routes: Annotated[
@@ -85,13 +85,6 @@ def convert(
             help="Synthesis model override (e.g. openrouter/auto).",
         ),
     ] = None,
-    export_candidate_bundle: Annotated[
-        bool,
-        typer.Option(
-            "--export-candidate-bundle/--no-candidate-bundle",
-            help="Write per-route markdown and metadata under candidate_bundle/.",
-        ),
-    ] = True,
     keep_temp: Annotated[
         bool,
         typer.Option(
@@ -109,7 +102,6 @@ def convert(
         routes=routes or DEFAULT_ROUTES,
         timeout_per_route_s=timeout_per_route,
         synthesize=synthesize,
-        export_candidate_bundle=export_candidate_bundle,
         keep_temp=keep_temp,
         openrouter_model=openrouter_model,
     )
