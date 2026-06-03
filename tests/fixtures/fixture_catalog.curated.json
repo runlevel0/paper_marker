@@ -5,7 +5,8 @@
     "route": "marker",
     "pdf_url": "https://greenteapress.com/thinkpython/thinkpython.pdf",
     "markdown_url": "https://raw.githubusercontent.com/VikParuchuri/marker/master/data/examples/markdown/thinkpython/thinkpython.md",
-    "pdf_path": "tests/fixtures/pdfs/marker-thinkpython-textbook.pdf",
+    "pdf_path": "tests/fixtures/smoke/marker-thinkpython-textbook/source.pdf",
+    "markdown_path": "tests/fixtures/smoke/marker-thinkpython-textbook/reference.md",
     "source": "https://github.com/VikParuchuri/marker/blob/master/README.md",
     "golden_fragments": ["# ", "$", "```"],
     "license_notes": "Think Python is distributed by Allen B. Downey under free textbook terms; verify downstream redistribution constraints."
@@ -16,7 +17,8 @@
     "route": "marker",
     "pdf_url": "https://arxiv.org/pdf/2101.03961.pdf",
     "markdown_url": "https://raw.githubusercontent.com/VikParuchuri/marker/master/data/examples/markdown/switch_transformers/switch_trans.md",
-    "pdf_path": "tests/fixtures/pdfs/marker-switch-transformers.pdf",
+    "pdf_path": "tests/fixtures/smoke/marker-switch-transformers/source.pdf",
+    "markdown_path": "tests/fixtures/smoke/marker-switch-transformers/reference.md",
     "source": "https://github.com/VikParuchuri/marker/blob/master/README.md",
     "golden_fragments": ["# ", "$$", "## "],
     "license_notes": "arXiv content may have publisher restrictions; use for local evaluation."
@@ -27,7 +29,8 @@
     "route": "marker",
     "pdf_url": "https://arxiv.org/pdf/1804.07821.pdf",
     "markdown_url": "https://raw.githubusercontent.com/VikParuchuri/marker/master/data/examples/markdown/multicolcnn/multicolcnn.md",
-    "pdf_path": "tests/fixtures/pdfs/marker-multicolcnn.pdf",
+    "pdf_path": "tests/fixtures/smoke/marker-multicolcnn/source.pdf",
+    "markdown_path": "tests/fixtures/smoke/marker-multicolcnn/reference.md",
     "source": "https://github.com/VikParuchuri/marker/blob/master/README.md",
     "golden_fragments": ["# ", "## ", "$"],
     "license_notes": "arXiv content may have publisher restrictions; use for local evaluation."
@@ -38,7 +41,7 @@
     "route": "markitdown",
     "pdf_url": "https://raw.githubusercontent.com/microsoft/markitdown/main/packages/markitdown/tests/test_files/test.pdf",
     "markdown_url": null,
-    "pdf_path": "tests/fixtures/pdfs/markitdown-official-test-pdf.pdf",
+    "pdf_path": "tests/fixtures/smoke/markitdown-official-test-pdf/source.pdf",
     "source": "https://github.com/microsoft/markitdown/blob/main/packages/markitdown/tests/_test_vectors.py",
     "golden_fragments": ["While there is contemporaneous exploration of multi-agent approaches"],
     "license_notes": "MarkItDown repository is MIT-licensed; verify fixture file license before redistribution."
@@ -49,7 +52,7 @@
     "route": "nougat",
     "pdf_url": "https://arxiv.org/pdf/2308.13418.pdf",
     "markdown_url": null,
-    "pdf_path": "tests/fixtures/pdfs/nougat-paper-reference.pdf",
+    "pdf_path": "tests/fixtures/smoke/nougat-paper-reference/source.pdf",
     "source": "https://github.com/facebookresearch/nougat",
     "golden_fragments": ["# ", "$", "Table"],
     "license_notes": "arXiv paper used as route-targeted sample."
@@ -60,7 +63,7 @@
     "route": "mineru",
     "pdf_url": "https://arxiv.org/pdf/2303.08774.pdf",
     "markdown_url": null,
-    "pdf_path": "tests/fixtures/pdfs/mineru-doc-example-arxiv.pdf",
+    "pdf_path": "tests/fixtures/smoke/mineru-doc-example-arxiv/source.pdf",
     "source": "https://github.com/opendatalab/MinerU/tree/master/docs/zh/usage/plugin/Cherry_Studio.md",
     "golden_fragments": ["# ", "$", "## "],
     "license_notes": "Example from MinerU plugin docs, arXiv source."
@@ -71,7 +74,8 @@
     "route": "marker",
     "pdf_url": "https://arxiv.org/pdf/2508.00836.pdf",
     "markdown_url": "https://raw.githubusercontent.com/HenriquesLab/manuscript-rxiv-maker/main/MANUSCRIPT/01_MAIN.md",
-    "pdf_path": "tests/fixtures/pdfs/rxiv-maker-paper.pdf",
+    "pdf_path": "tests/fixtures/smoke/rxiv-maker-paper/source.pdf",
+    "markdown_path": "tests/fixtures/smoke/rxiv-maker-paper/reference.md",
     "source": "https://github.com/HenriquesLab/manuscript-rxiv-maker",
     "golden_fragments": ["## ", "@fig:", "[@"],
     "license_notes": "Use for local model evaluation; manuscript repository provides markdown source."

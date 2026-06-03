@@ -65,3 +65,17 @@ def test_fixture_catalog_curated_entries_with_urls_have_pdf_url() -> None:
             assert entry.get("pdf_url"), (
                 f"Curated entry {entry['id']} with markdown_url should include pdf_url"
             )
+
+
+def test_fixture_catalog_curated_uses_smoke_layout_paths() -> None:
+    catalog = _load_catalog(FIXTURES_DIR / "fixture_catalog.curated.json")
+    for entry in catalog:
+        assert entry["pdf_path"].startswith("tests/fixtures/smoke/")
+        assert entry["pdf_path"].endswith("/source.pdf")
+        if entry.get("markdown_url"):
+            markdown_path = entry.get("markdown_path")
+            assert markdown_path, (
+                f"Curated entry {entry['id']} with markdown_url must declare markdown_path"
+            )
+            assert markdown_path.startswith("tests/fixtures/smoke/")
+            assert markdown_path.endswith("/reference.md")

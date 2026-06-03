@@ -8,4 +8,7 @@ out/
 *.log
 tests/fixtures/fixture_catalog_validation.json
 tests/fixtures/pdfs/
+tests/fixtures/smoke/**/source.pdf
+tests/fixtures/smoke/**/reference.md
+tests/fixtures/smoke/**/output/
 build/*

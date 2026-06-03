@@ -27,8 +27,11 @@ Real fixture execution model:
 
 Curated web-sourced candidates:
 - `tests/fixtures/fixture_catalog.curated.json` contains starter candidates from official library docs/tests first, then broader PDF+Markdown sources.
-- To materialize local PDFs from that catalog:
+- Each entry uses the smoke layout documented in `tests/fixtures/smoke/README.md` (`source.pdf`, optional `reference.md`, persisted `output/`).
+- To materialize local PDFs and reference markdown from that catalog:
   - `uv run python scripts/fetch_fixtures.py --catalog tests/fixtures/fixture_catalog.curated.json`
+- To run conversions and persist artifacts under each fixture's `output/` directory:
+  - `uv run python scripts/run_smoke_fixtures.py --catalog tests/fixtures/fixture_catalog.curated.json`
 - Then run integration validation by pointing:
   - `PAPER_MARKER_FIXTURE_CATALOG=tests/fixtures/fixture_catalog.curated.json`
 

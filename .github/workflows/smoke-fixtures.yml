@@ -1,0 +1,51 @@
+name: Smoke fixtures
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-fixtures:
+    name: Download fixtures, run smoke, upload artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --group dev --extra fallback
+
+      - name: Download curated fixture sources
+        run: uv run python scripts/fetch_fixtures.py --catalog tests/fixtures/fixture_catalog.curated.json
+
+      - name: Run smoke fixture conversions
+        run: uv run python scripts/run_smoke_fixtures.py --catalog tests/fixtures/fixture_catalog.curated.json
+
+      - name: Run smoke fixture integration test
+        env:
+          PAPER_MARKER_FIXTURE_CATALOG: tests/fixtures/fixture_catalog.curated.json
+        run: uv run pytest tests/integration/test_smoke_fixtures.py -m integration
+
+      - name: Upload smoke artifact bundle
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-fixtures
+          path: tests/fixtures/smoke/
+          if-no-files-found: warn
