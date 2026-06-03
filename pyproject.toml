@@ -73,6 +73,7 @@ package = true
 [dependency-groups]
 dev = [
   "pytest>=8.2.0",
+  "pytest-cov>=5.0.0",
   "pytest-mock>=3.14.0",
   "ruff>=0.4.8",
 ]
@@ -85,6 +86,22 @@ markers = [
   "integration: marks tests that require integration dependencies or local fixtures",
   "mcp: marks MCP protocol and server integration tests",
   "agent_style: marks deterministic agent-style MCP behavior tests",
+]
+addopts = [
+  "--cov=paper_marker.routes",
+  "--cov=paper_marker.synthesis",
+  "--cov-report=term-missing",
+]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 85
+include = [
+  "src/paper_marker/routes/*",
+  "src/paper_marker/synthesis/*",
 ]
 
 [tool.ruff]

@@ -104,3 +104,61 @@ def test_synthesize_candidates_retries_transient_http_status(
 
     assert result.markdown_text == "# merged"
     assert fake_client.calls == 2
+
+
+def test_synthesize_candidates_success_on_first_response(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    settings = AppSettings(OPENROUTER_API_KEY="test-key")
+    response = _response(
+        200,
+        {
+            "choices": [{"message": {"content": "# synthesized"}}],
+            "usage": {"total_tokens": 12},
+        },
+    )
+    fake_client = _FakeClient([response])
+    monkeypatch.setattr(httpx, "Client", lambda *args, **kwargs: fake_client)
+    candidate = CandidateResult(
+        route_name="marker",
+        status="ok",
+        markdown_text="# candidate",
+        metrics=CandidateMetrics.from_markdown("# candidate"),
+    )
+
+    result = synthesize_candidates([candidate], settings, model="test/model")
+
+    assert result.markdown_text == "# synthesized"
+    assert result.model == "test/model"
+    assert fake_client.calls == 1
+
+
+def test_synthesize_candidates_raises_on_non_transient_http_status(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    settings = AppSettings(
+        OPENROUTER_API_KEY="test-key",
+        PAPER_MARKER_SYNTH_HTTP_MAX_RETRIES=2,
+        PAPER_MARKER_SYNTH_HTTP_BACKOFF_SECONDS=0,
+    )
+    fake_client = _FakeClient([_response(400, {"error": {"message": "bad request"}})])
+    monkeypatch.setattr(httpx, "Client", lambda *args, **kwargs: fake_client)
+    candidate = CandidateResult(
+        route_name="marker",
+        status="ok",
+        markdown_text="# candidate",
+        metrics=CandidateMetrics.from_markdown("# candidate"),
+    )
+
+    with pytest.raises(httpx.HTTPStatusError):
+        synthesize_candidates([candidate], settings)
+
+    assert fake_client.calls == 1
+
+
+def test_synthesize_candidates_requires_api_key() -> None:
+    settings = AppSettings()
+    candidate = CandidateResult(route_name="marker", status="ok", markdown_text="# x")
+
+    with pytest.raises(ValueError, match="no OPENROUTER_API_KEY"):
+        synthesize_candidates([candidate], settings)
