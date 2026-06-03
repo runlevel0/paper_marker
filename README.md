@@ -31,13 +31,41 @@ discovered automatically from the tool environment; you do not need to add the u
 
 ## CLI
 
+Commands:
+
+| Command | Purpose |
+| --- | --- |
+| `list-routes` | JSON list of route names and whether each converter CLI is on `PATH` |
+| `doctor` | Route availability plus synthesis API base URL and whether a key is configured |
+| `convert` | Run parallel conversion and write outputs under `--out-dir` |
+
 List available routes:
 
 ```powershell
 paper-marker list-routes
 ```
 
-Run conversion:
+Check environment (routes + synthesis credentials):
+
+```powershell
+paper-marker doctor
+```
+
+Run conversion (all default routes):
+
+```powershell
+paper-marker convert path\to\paper.pdf --out-dir .\out
+```
+
+Run a subset of routes with a custom per-route timeout:
+
+```powershell
+paper-marker convert path\to\paper.pdf --out-dir .\out --routes marker --routes markitdown --timeout-per-route 600
+```
+
+Valid route names: `marker`, `mineru`, `nougat`, `markitdown` (repeat `--routes` to select more than one).
+
+Enable LLM synthesis (requires `OPENROUTER_API_KEY` or `OPENAI_API_KEY`):
 
 ```powershell
 paper-marker convert path\to\paper.pdf --out-dir .\out --synthesize --openrouter-model openrouter/auto
@@ -54,6 +82,20 @@ Keep intermediate route artifacts in `_work`:
 ```powershell
 paper-marker convert path\to\paper.pdf --out-dir .\out --keep-temp
 ```
+
+### Convert outputs
+
+Under `--out-dir` the pipeline writes:
+
+| Artifact | Description |
+| --- | --- |
+| `final.md` | Selected or synthesized Markdown (when any route succeeds) |
+| `final_result.json` | Full run payload (candidates, selection, synthesis metadata) |
+| `run_report.json` | Timing and selection summary |
+| `candidate_bundle/` | Per-route Markdown and metadata (unless `--no-candidate-bundle`) |
+| `_work/` | Intermediate route workspaces (only with `--keep-temp`) |
+
+`convert` prints the same `final_result` JSON to stdout.
 
 ## Configuration
 
@@ -78,16 +120,64 @@ See `CONTRIBUTING.md` for development setup and `CHANGELOG.md` for release histo
 
 ## MCP Server (stdio)
 
+Start the server (stdio transport):
+
 ```powershell
-paper-marker-mcp
+uv run paper-marker-mcp
 ```
 
-Tools:
-- `convert_pdf_to_markdown`
-- `list_conversion_routes`
-- `validate_environment`
+Or after `uv tool install`, use `paper-marker-mcp` on your `PATH`.
 
-The `convert_pdf_to_markdown` tool also supports `keep_temp` for parity with the CLI.
+### Tools
+
+| Tool | CLI equivalent | Purpose |
+| --- | --- | --- |
+| `list_conversion_routes` | `list-routes` | Route names and availability |
+| `validate_environment` | `doctor` | Routes, API base URL, `has_api_key` |
+| `convert_pdf_to_markdown` | `convert` | Run conversion; same outputs under `out_dir` |
+
+### `convert_pdf_to_markdown` parameters
+
+| Parameter | Required | Default | Notes |
+| --- | --- | --- | --- |
+| `pdf_path` | yes | — | Input PDF path |
+| `out_dir` | yes | — | Output directory (no implicit default) |
+| `routes` | no | all four routes | e.g. `["marker", "markitdown"]` |
+| `timeout_per_route_s` | no | `300` | Per-route timeout in seconds |
+| `synthesize` | no | `false` | LLM merge when API key is set |
+| `openrouter_model` | no | env default | Model override for synthesis |
+| `export_candidate_bundle` | no | `true` | Set `false` to skip `candidate_bundle/` |
+| `keep_temp` | no | `false` | Keep `_work/` after the run |
+
+### Sample client configuration
+
+**Cursor** (`.cursor/mcp.json` in the project or user config):
+
+```json
+{
+  "mcpServers": {
+    "paper-marker": {
+      "command": "uv",
+      "args": ["run", "--directory", "C:\\path\\to\\paper_marker", "paper-marker-mcp"]
+    }
+  }
+}
+```
+
+**Claude Desktop** (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "paper-marker": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/paper_marker", "paper-marker-mcp"]
+    }
+  }
+}
+```
+
+Replace the `--directory` path with your clone. For a global `uv tool install`, you can use `"command": "paper-marker-mcp"` with an empty `args` array when the tool is on `PATH`.
 
 ## MCP Testing
 

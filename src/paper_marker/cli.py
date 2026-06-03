@@ -16,6 +16,7 @@ app = typer.Typer(no_args_is_help=True, help="Parallel scientific PDF to Markdow
 
 @app.command("list-routes")
 def list_routes() -> None:
+    """List registered conversion routes and whether each CLI is available on PATH."""
     settings = load_settings()
     orchestrator = ConversionOrchestrator(settings=settings)
     typer.echo(json.dumps(orchestrator.list_routes(), indent=2))
@@ -23,6 +24,7 @@ def list_routes() -> None:
 
 @app.command("doctor")
 def doctor() -> None:
+    """Report route availability and whether synthesis API credentials are configured."""
     settings = load_settings()
     orchestrator = ConversionOrchestrator(settings=settings)
     route_status = orchestrator.list_routes()
@@ -36,17 +38,69 @@ def doctor() -> None:
 
 @app.command("convert")
 def convert(
-    pdf_path: Annotated[Path, typer.Argument(exists=True, file_okay=True, dir_okay=False)],
-    out_dir: Annotated[Path, typer.Option("--out-dir")],
-    routes: Annotated[list[str] | None, typer.Option("--routes")] = None,
-    timeout_per_route: Annotated[int, typer.Option("--timeout-per-route")] = 300,
-    synthesize: Annotated[bool, typer.Option("--synthesize")] = False,
-    openrouter_model: Annotated[str | None, typer.Option("--openrouter-model")] = None,
+    pdf_path: Annotated[
+        Path,
+        typer.Argument(
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            help="Input PDF file to convert.",
+        ),
+    ],
+    out_dir: Annotated[
+        Path,
+        typer.Option(
+            "--out-dir",
+            help="Output directory for final.md, JSON reports, and optional bundles.",
+        ),
+    ],
+    routes: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--routes",
+            help=(
+                "Route names to run (repeatable). Defaults to all: marker, mineru, nougat, "
+                "markitdown."
+            ),
+        ),
+    ] = None,
+    timeout_per_route: Annotated[
+        int,
+        typer.Option(
+            "--timeout-per-route",
+            help="Per-route subprocess timeout in seconds (overrides env default).",
+        ),
+    ] = 300,
+    synthesize: Annotated[
+        bool,
+        typer.Option(
+            "--synthesize",
+            help="Merge successful candidates via OpenRouter/OpenAI-compatible API.",
+        ),
+    ] = False,
+    openrouter_model: Annotated[
+        str | None,
+        typer.Option(
+            "--openrouter-model",
+            help="Synthesis model override (e.g. openrouter/auto).",
+        ),
+    ] = None,
     export_candidate_bundle: Annotated[
-        bool, typer.Option("--export-candidate-bundle/--no-candidate-bundle")
+        bool,
+        typer.Option(
+            "--export-candidate-bundle/--no-candidate-bundle",
+            help="Write per-route markdown and metadata under candidate_bundle/.",
+        ),
     ] = True,
-    keep_temp: Annotated[bool, typer.Option("--keep-temp")] = False,
+    keep_temp: Annotated[
+        bool,
+        typer.Option(
+            "--keep-temp",
+            help="Retain intermediate route workspace under _work/ after the run.",
+        ),
+    ] = False,
 ) -> None:
+    """Run parallel PDF-to-Markdown conversion and write results under --out-dir."""
     settings = load_settings()
     orchestrator = ConversionOrchestrator(settings=settings)
     request = ConversionRequest(

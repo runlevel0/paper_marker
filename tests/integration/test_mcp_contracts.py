@@ -24,7 +24,10 @@ def test_mcp_tools_list_contract(mcp_server: McpServerProcess) -> None:
         "convert_pdf_to_markdown",
     }.issubset(names)
     for tool in tools:
-        assert isinstance(tool.get("description"), str)
+        description = tool.get("description")
+        assert isinstance(description, str)
+        assert description.strip(), f"tool {tool['name']} has empty description"
+        assert len(description.strip()) >= 20, f"tool {tool['name']} description too short"
         assert isinstance(tool.get("inputSchema"), dict)
 
 

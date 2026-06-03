@@ -15,6 +15,7 @@ mcp = FastMCP("paper-marker")
 
 @mcp.tool()
 def list_conversion_routes() -> list[dict[str, Any]]:
+    """List registered conversion routes and whether each external CLI is on PATH."""
     settings = load_settings()
     orchestrator = ConversionOrchestrator(settings=settings)
     return orchestrator.list_routes()
@@ -22,6 +23,7 @@ def list_conversion_routes() -> list[dict[str, Any]]:
 
 @mcp.tool()
 def validate_environment() -> dict[str, Any]:
+    """Report route availability, API base URL, and whether synthesis credentials are set."""
     settings = load_settings()
     orchestrator = ConversionOrchestrator(settings=settings)
     return {
@@ -42,7 +44,18 @@ def convert_pdf_to_markdown(
     export_candidate_bundle: bool = True,
     keep_temp: bool = False,
 ) -> dict[str, Any]:
-    # CLI/MCP parity: both interfaces expose temp workspace retention controls.
+    """Convert a PDF to Markdown using parallel routes; mirrors the paper-marker convert CLI.
+
+    Args:
+        pdf_path: Path to the input PDF file.
+        out_dir: Output directory for final.md, JSON reports, and optional bundles (required).
+        routes: Route names to run; defaults to marker, mineru, nougat, markitdown.
+        timeout_per_route_s: Per-route subprocess timeout in seconds.
+        synthesize: When true, merge successful candidates via OpenRouter/OpenAI-compatible API.
+        openrouter_model: Optional synthesis model override (e.g. openrouter/auto).
+        export_candidate_bundle: Write per-route artifacts under candidate_bundle/ when true.
+        keep_temp: Retain intermediate route workspace under _work/ after the run when true.
+    """
     settings = load_settings()
     orchestrator = ConversionOrchestrator(settings=settings)
     request = ConversionRequest(

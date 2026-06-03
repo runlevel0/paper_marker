@@ -4,10 +4,17 @@ import inspect
 from pathlib import Path
 from typing import Any
 
+import pytest
 from typer.testing import CliRunner
 
 from paper_marker.cli import app
 from paper_marker.mcp import server as mcp_server
+
+_EXPECTED_MCP_TOOLS = (
+    "list_conversion_routes",
+    "validate_environment",
+    "convert_pdf_to_markdown",
+)
 
 
 def test_cli_list_routes_runs() -> None:
@@ -133,3 +140,36 @@ def test_mcp_convert_requires_out_dir_parameter() -> None:
     signature = inspect.signature(mcp_server.convert_pdf_to_markdown)
     out_dir = signature.parameters["out_dir"]
     assert out_dir.default is inspect.Parameter.empty
+
+
+def test_cli_help_documents_commands_and_convert_options() -> None:
+    runner = CliRunner()
+    root = runner.invoke(app, ["--help"])
+    assert root.exit_code == 0
+    for command in ("list-routes", "doctor", "convert"):
+        assert command in root.stdout
+
+    convert_help = runner.invoke(
+        app,
+        ["convert", "--help"],
+        env={"COLUMNS": "240", "TYPER_WIDTH": "240"},
+    )
+    assert convert_help.exit_code == 0
+    for fragment in (
+        "Output directory",
+        "marker, mineru",
+        "subprocess timeout",
+        "OpenRouter",
+        "openrouter/auto",
+        "candidate_bundle",
+        "_work/",
+    ):
+        assert fragment in convert_help.stdout
+
+
+@pytest.mark.parametrize("tool_name", _EXPECTED_MCP_TOOLS)
+def test_mcp_tool_docstrings_are_meaningful(tool_name: str) -> None:
+    tool_fn = getattr(mcp_server, tool_name)
+    doc = tool_fn.__doc__
+    assert doc is not None
+    assert len(doc.strip()) >= 20
