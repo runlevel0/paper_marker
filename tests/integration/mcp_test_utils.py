@@ -81,4 +81,3 @@ def decode_tool_result(result: Any) -> Any:
             continue
         decoded.append(item.model_dump(mode="json") if hasattr(item, "model_dump") else item)
     return decoded
-

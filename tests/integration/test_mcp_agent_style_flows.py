@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-
 from mcp_test_utils import McpServerProcess
 
 
@@ -52,7 +51,9 @@ class DeterministicAgentHarness:
             )
             payloads.append(payload)
             if "error" in str(payload).lower() or "not found" in str(payload).lower():
-                return AgentRun(tool_calls, payloads, "Conversion failed gracefully with an MCP error.")
+                return AgentRun(
+                    tool_calls, payloads, "Conversion failed gracefully with an MCP error."
+                )
             return AgentRun(tool_calls, payloads, "Conversion request completed.")
 
         return AgentRun(tool_calls, payloads, "No matching MCP tool for prompt.")
@@ -94,4 +95,3 @@ def test_agent_style_convert_error_recovery_flow(mcp_server: McpServerProcess) -
     run = agent.run_prompt("Convert this paper to markdown and keep temp files.")
     assert run.tool_calls == ["convert_pdf_to_markdown"]
     assert "gracefully" in run.final_text.lower() or "completed" in run.final_text.lower()
-

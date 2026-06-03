@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-
 from mcp_test_utils import McpServerProcess
 
 
@@ -78,4 +77,3 @@ def _payload_to_text(payload: Any) -> str:
     if isinstance(payload, dict):
         return str(payload)
     return " ".join(str(item) for item in payload)
-

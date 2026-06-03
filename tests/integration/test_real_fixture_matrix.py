@@ -26,9 +26,7 @@ def _load_fixture_catalog() -> list[dict[str, Any]]:
 def test_real_fixture_conversion_matrix(tmp_path: Path) -> None:
     catalog = _load_fixture_catalog()
     orchestrator = ConversionOrchestrator(settings=AppSettings())
-    route_status = {
-        detail["route"]: detail["available"] for detail in orchestrator.list_routes()
-    }
+    route_status = {detail["route"]: detail["available"] for detail in orchestrator.list_routes()}
 
     executed = 0
     for fixture in catalog:
