@@ -34,7 +34,7 @@ def validate_environment() -> dict[str, Any]:
 @mcp.tool()
 def convert_pdf_to_markdown(
     pdf_path: str,
-    out_dir: str = "out",
+    out_dir: str,
     routes: list[str] | None = None,
     timeout_per_route_s: int = 300,
     synthesize: bool = False,

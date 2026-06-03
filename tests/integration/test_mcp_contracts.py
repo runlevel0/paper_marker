@@ -30,6 +30,16 @@ def test_mcp_tools_list_contract(mcp_server: McpServerProcess) -> None:
 
 @pytest.mark.integration
 @pytest.mark.mcp
+def test_convert_pdf_to_markdown_requires_out_dir_in_schema(mcp_server: McpServerProcess) -> None:
+    tools = mcp_server.list_tools()
+    convert_tool = next(tool for tool in tools if tool["name"] == "convert_pdf_to_markdown")
+    schema = convert_tool["inputSchema"]
+    required = schema.get("required", [])
+    assert "out_dir" in required
+
+
+@pytest.mark.integration
+@pytest.mark.mcp
 def test_validate_environment_contract(mcp_server: McpServerProcess) -> None:
     payload = mcp_server.call_tool("validate_environment")
     assert isinstance(payload, dict)
@@ -50,6 +60,24 @@ def test_list_conversion_routes_contract(mcp_server: McpServerProcess) -> None:
     assert isinstance(first, dict)
     assert "route" in first
     assert "available" in first
+
+
+@pytest.mark.integration
+@pytest.mark.mcp
+def test_convert_pdf_to_markdown_missing_out_dir_fails_validation(
+    mcp_server: McpServerProcess,
+) -> None:
+    bad_path = str(Path("nonexistent") / "missing.pdf")
+    with pytest.raises(Exception) as exc_info:
+        mcp_server.call_tool(
+            "convert_pdf_to_markdown",
+            {
+                "pdf_path": bad_path,
+                "routes": ["fallback"],
+                "timeout_per_route_s": 1,
+            },
+        )
+    assert "out_dir" in str(exc_info.value).lower()
 
 
 @pytest.mark.integration

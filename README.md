@@ -46,13 +46,13 @@ paper-marker convert path\to\paper.pdf --out-dir .\out --synthesize --openrouter
 Disable candidate bundle output:
 
 ```powershell
-paper-marker convert path\to\paper.pdf --no-candidate-bundle
+paper-marker convert path\to\paper.pdf --out-dir .\out --no-candidate-bundle
 ```
 
 Keep intermediate route artifacts in `_work`:
 
 ```powershell
-paper-marker convert path\to\paper.pdf --keep-temp
+paper-marker convert path\to\paper.pdf --out-dir .\out --keep-temp
 ```
 
 ## Configuration

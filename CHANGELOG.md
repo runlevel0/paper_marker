@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** `paper-marker convert` requires `--out-dir`; the implicit default `out/` was removed.
+- **Breaking:** MCP `convert_pdf_to_markdown` requires `out_dir`; the implicit default `"out"` was removed.
 - Switched issue tracking from the markdown ledger to [GitHub Issues](https://github.com/runlevel0/paper_marker/issues); historical entries archived under `docs/archive/`.
 
 ### Added

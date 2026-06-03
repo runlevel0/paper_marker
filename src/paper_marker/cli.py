@@ -37,7 +37,7 @@ def doctor() -> None:
 @app.command("convert")
 def convert(
     pdf_path: Annotated[Path, typer.Argument(exists=True, file_okay=True, dir_okay=False)],
-    out_dir: Annotated[Path, typer.Option("--out-dir")] = Path("out"),
+    out_dir: Annotated[Path, typer.Option("--out-dir")],
     routes: Annotated[list[str] | None, typer.Option("--routes")] = None,
     timeout_per_route: Annotated[int, typer.Option("--timeout-per-route")] = 300,
     synthesize: Annotated[bool, typer.Option("--synthesize")] = False,

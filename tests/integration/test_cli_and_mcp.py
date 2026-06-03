@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +15,15 @@ def test_cli_list_routes_runs() -> None:
     result = runner.invoke(app, ["list-routes"])
     assert result.exit_code == 0
     assert "route" in result.stdout
+
+
+def test_cli_convert_requires_out_dir(tmp_path: Path) -> None:
+    pdf_path = tmp_path / "doc.pdf"
+    pdf_path.write_text("dummy", encoding="utf-8")
+    runner = CliRunner()
+    result = runner.invoke(app, ["convert", str(pdf_path)])
+    assert result.exit_code != 0
+    assert "out-dir" in result.output.lower() or "out_dir" in result.output.lower()
 
 
 def test_cli_convert_flag_for_candidate_bundle(monkeypatch: Any, tmp_path: Path) -> None:
@@ -117,3 +127,9 @@ def test_mcp_convert_tool_reuses_pipeline(monkeypatch: Any, tmp_path: Path) -> N
     )
     assert payload["selection_reason"] == "best guess"
     assert captured["request"].keep_temp is True
+
+
+def test_mcp_convert_requires_out_dir_parameter() -> None:
+    signature = inspect.signature(mcp_server.convert_pdf_to_markdown)
+    out_dir = signature.parameters["out_dir"]
+    assert out_dir.default is inspect.Parameter.empty
