@@ -53,10 +53,24 @@ paper-marker convert path\to\paper.pdf --keep-temp
 
 ## Configuration
 
-For synthesis with OpenRouter/OpenAI-compatible APIs:
-- `OPENROUTER_API_KEY` or `OPENAI_API_KEY`
-- `OPENAI_BASE_URL` (default `https://openrouter.ai/api/v1`)
-- `PAPER_MARKER_OPENROUTER_MODEL` (default model name)
+Copy `.env.example` to `.env` and set values as needed. All settings can also be exported as environment variables.
+
+| Variable | Purpose | Default |
+| --- | --- | --- |
+| `OPENROUTER_API_KEY` | OpenRouter API key for synthesis | — |
+| `OPENAI_API_KEY` | Alternative API key (used if OpenRouter key unset) | — |
+| `OPENAI_BASE_URL` | OpenAI-compatible API base URL | `https://openrouter.ai/api/v1` |
+| `PAPER_MARKER_OPENROUTER_MODEL` | Default synthesis model | `openrouter/auto` |
+| `PAPER_MARKER_TIMEOUT_PER_ROUTE` | Per-route subprocess timeout (seconds) | `300` |
+| `PAPER_MARKER_MAX_PARALLEL_ROUTES` | Max parallel route workers | `4` |
+| `PAPER_MARKER_SYNTH_MAX_CHARS_PER_CANDIDATE` | Synthesis prompt cap per candidate | `12000` |
+| `PAPER_MARKER_SYNTH_MAX_TOTAL_CHARS` | Synthesis prompt cap total | `30000` |
+| `PAPER_MARKER_SYNTH_HTTP_MAX_RETRIES` | Retries for transient synthesis HTTP errors | `2` |
+| `PAPER_MARKER_SYNTH_HTTP_BACKOFF_SECONDS` | Base backoff between synthesis retries (seconds) | `1.0` |
+
+For integration tests with real PDFs, also set `PAPER_MARKER_FIXTURE_CATALOG` (see `tests/fixtures/README.md`).
+
+See `CONTRIBUTING.md` for development setup and `CHANGELOG.md` for release history.
 
 ## MCP Server (stdio)
 

@@ -226,17 +226,25 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
 ## ISSUE-012
 - ID: ISSUE-012
 - Severity: Medium
-- Status: open
+- Status: done
 - Owner: unassigned
 - Evidence:
   - No `CONTRIBUTING.md`, no `.env.example`, no `CHANGELOG.md`.
-  - README documents only 3 of 8 environment variables read by `config.py` (timeout, max parallel routes, synth char budgets are undocumented).
+  - README documented only 3 of 8 `AppSettings` environment variables.
+  - Added `CONTRIBUTING.md` (uv setup, ruff/pytest commands, branch conventions, issue ledger workflow).
+  - Added `.env.example` with all `config.py` aliases plus `PAPER_MARKER_FIXTURE_CATALOG` for integration tests.
+  - Added `CHANGELOG.md` with Unreleased and 0.1.0 sections.
+  - Expanded README Configuration to a full env-var table (10 settings).
+  - Commit: `21c7a82`.
 - Fix Plan:
   - Add `CONTRIBUTING.md` (dev workflow, lint/test commands, branch conventions).
   - Add `.env.example` listing all supported env vars.
   - Add `CHANGELOG.md` and document the full env var set in README.
 - Verification:
-  - Files present; README env section lists all variables.
+  - `Test-Path CONTRIBUTING.md, .env.example, CHANGELOG.md` -> all `True`
+  - `uv run ruff check .` -> All checks passed!
+  - `uv run ruff format --check .` -> 28 files already formatted
+  - `uv run pytest -m "not integration"` -> `20 passed, 12 deselected`
 - Done Criteria:
   - New contributors can set up and configure the tool from docs alone.
 

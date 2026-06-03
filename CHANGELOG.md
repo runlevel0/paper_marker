@@ -1,0 +1,23 @@
+# Changelog
+
+All notable changes to this project are documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+
+- Contributor documentation (`CONTRIBUTING.md`), environment template (`.env.example`), and this changelog
+- Full environment variable reference in README
+
+## [0.1.0] - 2026-06-03
+
+### Added
+
+- Parallel PDF-to-Markdown conversion via external converter CLIs (Marker, MinerU, Nougat, MarkItDown)
+- Heuristic candidate scoring and optional OpenRouter/OpenAI-compatible synthesis
+- Typer CLI (`paper-marker`) and stdio MCP server (`paper-marker-mcp`)
+- GitHub Actions CI and publish workflows
+- Fixture catalog integration harness and implementation issues ledger
