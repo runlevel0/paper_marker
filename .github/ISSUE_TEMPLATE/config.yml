@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Implementation task template
+    url: https://github.com/runlevel0/paper_marker/issues/new?template=implementation_task.yml
+    about: Track a scoped implementation task with evidence and verification steps
+  - name: All GitHub Issues
+    url: https://github.com/runlevel0/paper_marker/issues
+    about: Browse open and closed issues

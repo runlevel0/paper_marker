@@ -111,7 +111,7 @@ See `docs/release.md` for required GitHub/PyPI trusted publishing setup, rollbac
 
 ## Development Status
 
-- Added issue ledger at `docs/implementation_issues.md`.
+- Track work in [GitHub Issues](https://github.com/runlevel0/paper_marker/issues) (migrated from the former markdown ledger; archives under `docs/archive/`).
 - Hardened route validation and contract parity (`--keep-temp` in CLI/MCP).
 - Added synthesis prompt budget controls with provenance metadata.
 - Added real fixture-matrix integration harness and fixture catalog template.

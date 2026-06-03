@@ -34,6 +34,7 @@ git push origin vX.Y.Z
 
 4. GitHub Actions runs the publish workflow automatically.
 5. Verify the release on [PyPI](https://pypi.org/project/paper-marker/).
+6. Review [open GitHub Issues](https://github.com/runlevel0/paper_marker/issues) for blockers or items targeted for the release.
 
 ## Safety Guards in Publish Workflow
 

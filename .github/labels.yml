@@ -1,0 +1,42 @@
+# Reference list for scripts/migrate_ledger_to_github.py (not GitHub-native).
+# Apply with: uv run python scripts/migrate_ledger_to_github.py --create-labels-only
+
+- name: severity/high
+  color: b60205
+  description: High severity issue
+
+- name: severity/medium
+  color: d93f0b
+  description: Medium severity issue
+
+- name: severity/low
+  color: 0e8a16
+  description: Low severity issue
+
+- name: area/cli
+  color: 1d76db
+  description: CLI interface
+
+- name: area/mcp
+  color: 5319e7
+  description: MCP server
+
+- name: area/docs
+  color: fbca04
+  description: Documentation
+
+- name: area/testing
+  color: c5def5
+  description: Tests and fixtures
+
+- name: area/packaging
+  color: e99695
+  description: Packaging, install, PyPI
+
+- name: area/pipeline
+  color: bfdadc
+  description: Conversion pipeline and output
+
+- name: legacy-ledger
+  color: ededed
+  description: Migrated from docs/implementation_issues.md

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Switched issue tracking from the markdown ledger to [GitHub Issues](https://github.com/runlevel0/paper_marker/issues); historical entries archived under `docs/archive/`.
+
 ### Added
 
 - MIT `LICENSE` and complete PyPI project metadata (`license`, authors, classifiers, keywords, URLs)

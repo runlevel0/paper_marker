@@ -71,17 +71,26 @@ Per `docs/modeling_policy.md`:
 - The real fixture matrix (`tests/integration/test_real_fixture_matrix.py`) needs the env var
   `PAPER_MARKER_FIXTURE_CATALOG`, downloaded PDFs, and the converter CLIs installed.
   **No PDF binaries are committed** — only JSON catalogs under `tests/fixtures/`.
-- Route-level and synthesis-HTTP tests are currently missing (tracked as ISSUE-010).
+- Route-level and synthesis-HTTP tests are currently missing (tracked as GitHub issue #10).
 
 ## Issue tracking workflow
 
-This repo uses a file-based ledger instead of GitHub issues: **`docs/implementation_issues.md`**.
+This project tracks work in **GitHub Issues**: https://github.com/runlevel0/paper_marker/issues
 
-- Status lifecycle: `open -> in_progress -> blocked|done`.
-- When you start work, set the issue to `in_progress`; when done, set `done` and fill in
-  **Evidence** (what changed) and **Verification** (commands run).
-- Add new findings as `ISSUE-NNN` following the existing format (ID, Severity, Status, Owner,
-  Evidence, Fix Plan, Verification, Done Criteria).
+- Legacy migrated items use `[ISSUE-NNN]` in titles; see [`docs/archive/github_issue_map.json`](docs/archive/github_issue_map.json).
+- Open new tasks via the [implementation task template](https://github.com/runlevel0/paper_marker/issues/new?template=implementation_task.yml).
+- When starting work, assign yourself and add labels as needed; close with evidence in comments or the PR (`Fixes #N`).
+- PRs should reference the GitHub issue they address.
+
+**Agent commands (requires `gh auth login` or `GH_TOKEN`):**
+
+```powershell
+gh issue list --state open --repo runlevel0/paper_marker
+gh issue view 17 --repo runlevel0/paper_marker
+gh issue create --repo runlevel0/paper_marker --title "..." --body "..."
+```
+
+Historical markdown ledger archives live under `docs/archive/`; see [`docs/implementation_issues.md`](docs/implementation_issues.md) for pointers.
 
 ## Known gotchas
 

@@ -1,0 +1,34 @@
+name: Bug report
+description: Report unexpected behavior
+title: "[BUG] "
+labels:
+  - severity/medium
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `paper-marker convert ...`
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: OS, Python version, installed route CLIs, paper-marker version
+    validations:
+      required: false

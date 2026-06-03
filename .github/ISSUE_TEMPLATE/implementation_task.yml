@@ -1,0 +1,45 @@
+name: Implementation task
+description: Track a scoped implementation task with structured evidence and verification
+title: "[ISSUE-XXX] "
+labels:
+  - legacy-ledger
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: What was observed or what changed
+      placeholder: Bullet list of findings or implementation notes
+    validations:
+      required: true
+  - type: textarea
+    id: fix_plan
+    attributes:
+      label: Fix Plan
+      description: Concrete steps to resolve the issue
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Commands run and outcomes
+    validations:
+      required: true
+  - type: textarea
+    id: done_criteria
+    attributes:
+      label: Done Criteria
+      description: Definition of done
+    validations:
+      required: true

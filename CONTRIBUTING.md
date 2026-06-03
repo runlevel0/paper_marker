@@ -49,11 +49,17 @@ uv run paper-marker doctor
 
 ## Issue tracking
 
-We use a file-based ledger at `docs/implementation_issues.md` instead of GitHub Issues.
+We use **GitHub Issues**: https://github.com/runlevel0/paper_marker/issues
 
-When you start work on a tracked item, set its status to `in_progress`. When finished, set it to `done` and fill in **Evidence** and **Verification** (commands run and results).
+- Open new implementation tasks with the [implementation task template](https://github.com/runlevel0/paper_marker/issues/new?template=implementation_task.yml).
+- Migrated legacy items are titled `[ISSUE-NNN]`; mapping is in `docs/archive/github_issue_map.json`.
+- When you start work, assign the issue and comment with your plan; when finished, close via PR (`Fixes #N`) with **Evidence** and **Verification** (commands run).
+- Do not add new items to the old markdown ledger; see `docs/implementation_issues.md` for archive pointers only.
 
-If you discover a new gap, add `ISSUE-NNN` following the existing format rather than expanding unrelated fixes in the same change.
+```powershell
+gh issue list --state open --repo runlevel0/paper_marker
+gh issue view 17 --repo runlevel0/paper_marker
+```
 
 ## Code conventions
 
