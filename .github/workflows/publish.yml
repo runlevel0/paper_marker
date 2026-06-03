@@ -40,7 +40,7 @@ jobs:
         run: uv run ruff format --check .
 
       - name: Run tests with coverage
-        run: uv run pytest -m "not integration" --cov-report=term-missing
+        run: uv run pytest -m "not integration and not install_smoke" --cov-report=term-missing
 
   build:
     name: Build and validate release
@@ -109,6 +109,11 @@ jobs:
 
       - name: Build distribution artifacts
         run: python -m build
+
+      - name: Install smoke (built wheel)
+        run: |
+          python -m pip install --quiet anyio mcp
+          python scripts/install_smoke_check.py --dist-dir dist
 
       - name: Upload distribution artifacts
         uses: actions/upload-artifact@v4

@@ -5,29 +5,35 @@ Local-first scientific PDF to Markdown converter with:
 - optional OpenRouter/OpenAI-compatible synthesis
 - both CLI and stdio MCP server interfaces
 
-## Installation with uv
+## Installation
 
-Project-local development:
+**End users (PyPI):** see [`docs/installation.md`](docs/installation.md) for `uv tool install`,
+pip/venv install, verification commands, route extras, and MCP client setup.
+
+Quick check after install:
+
+```powershell
+paper-marker --help
+paper-marker list-routes
+```
+
+**Contributors (editable workspace):**
 
 ```powershell
 uv sync --extra llm
 ```
 
-Install with all route extras:
+All route extras (heavy ML dependencies):
 
 ```powershell
 uv sync --extra all --extra llm
 ```
 
-User-space global install (tool mode):
+Install smoke from a clone (wheel → clean venv → entry points):
 
 ```powershell
-uv tool install ".[all,llm]"
+uv run python scripts/install_smoke_check.py
 ```
-
-Route CLIs installed as dependencies of the tool (for example `marker`, `magic-pdf`) are
-discovered automatically from the tool environment; you do not need to add the uv tool
-`Scripts` directory to `PATH`.
 
 ## CLI
 
@@ -180,7 +186,8 @@ See `docs/mcp_testing.md` for smoke checks, MCP contract tests, agent-style beha
 
 ## CI/CD and Releases
 
-- CI runs on pull requests and pushes to `main` in `.github/workflows/ci.yml`.
+- CI runs on pull requests and pushes to `main` in `.github/workflows/ci.yml` (lint, unit
+  tests, and an install-smoke job that builds a wheel and exercises installed console scripts).
 - PyPI publishing runs on tags like `vX.Y.Z` in `.github/workflows/publish.yml`.
 - Tag versions must match `pyproject.toml` and must not already exist on PyPI.
 

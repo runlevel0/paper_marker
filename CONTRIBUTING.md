@@ -29,10 +29,12 @@ Copy `.env.example` to `.env` and fill in any API keys you need for synthesis or
 ```powershell
 uv run ruff check .
 uv run ruff format --check .
-uv run pytest -m "not integration"
+uv run pytest -m "not integration and not install_smoke"
 ```
 
-The `integration` marker gates real-converter and MCP protocol tests. CI runs only `-m "not integration"`.
+The `integration` marker gates real-converter and MCP protocol tests. The `install_smoke` marker
+gates wheel install smoke (slow); CI runs it in a dedicated job via
+`scripts/install_smoke_check.py`.
 
 Optional checks:
 

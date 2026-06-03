@@ -70,7 +70,18 @@ uv tool install "paper-marker==X.Y.Z"
 
 ### Post-install Smoke Checks
 
+See [`docs/installation.md`](installation.md) for full install and verification steps.
+
 ```powershell
 paper-marker --help
+paper-marker list-routes
 paper-marker-mcp --help
 ```
+
+From a repository checkout, run the automated gate:
+
+```powershell
+uv run python scripts/install_smoke_check.py
+```
+
+The publish workflow runs the same check against the wheel in `dist/` before upload.

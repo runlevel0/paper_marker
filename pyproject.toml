@@ -86,6 +86,7 @@ markers = [
   "integration: marks tests that require integration dependencies or local fixtures",
   "mcp: marks MCP protocol and server integration tests",
   "agent_style: marks deterministic agent-style MCP behavior tests",
+  "install_smoke: marks wheel install smoke tests (clean venv + console scripts)",
 ]
 addopts = [
   "--cov=paper_marker.routes",

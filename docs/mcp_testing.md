@@ -10,6 +10,14 @@ Run install/startup and protocol smoke checks:
 uv run python scripts/mcp_smoke_check.py
 ```
 
+Validate PyPI-style install (wheel build, clean venv, installed `paper-marker-mcp` entry point):
+
+```powershell
+uv run python scripts/install_smoke_check.py
+```
+
+See [`installation.md`](installation.md) for end-user install commands.
+
 Run MCP contract tests:
 
 ```powershell
