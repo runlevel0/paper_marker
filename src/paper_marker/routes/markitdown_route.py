@@ -1,29 +1,37 @@
 from __future__ import annotations
 
-import shutil
 import subprocess
 import time
 from pathlib import Path
 
 from paper_marker.core.models import CandidateMetrics, CandidateResult
 from paper_marker.routes.base import ConversionRoute
+from paper_marker.routes.cli_discovery import resolve_cli_executable
 
 
 class MarkItDownRoute(ConversionRoute):
     name = "markitdown"
 
     def is_available(self) -> tuple[bool, str]:
-        executable = shutil.which("markitdown")
+        executable = resolve_cli_executable("markitdown")
         if executable:
             return True, f"Found markitdown CLI at {executable}"
-        return False, "markitdown CLI not found in PATH"
+        return False, "markitdown CLI not found on PATH or in the paper-marker environment"
 
     def convert(self, pdf_path: Path, work_dir: Path, timeout_s: int) -> CandidateResult:
         start = time.perf_counter()
         out_dir = work_dir / self.name
         out_dir.mkdir(parents=True, exist_ok=True)
         out_file = out_dir / "markitdown.md"
-        cmd = ["markitdown", str(pdf_path)]
+        executable = resolve_cli_executable("markitdown")
+        if not executable:
+            return CandidateResult(
+                route_name=self.name,
+                status="unavailable",
+                error="markitdown CLI not found on PATH or in the paper-marker environment",
+                elapsed_s=time.perf_counter() - start,
+            )
+        cmd = [executable, str(pdf_path)]
         try:
             completed = subprocess.run(
                 cmd,

@@ -1,28 +1,36 @@
 from __future__ import annotations
 
-import shutil
 import subprocess
 import time
 from pathlib import Path
 
 from paper_marker.core.models import CandidateMetrics, CandidateResult
 from paper_marker.routes.base import ConversionRoute
+from paper_marker.routes.cli_discovery import resolve_cli_executable
 
 
 class NougatRoute(ConversionRoute):
     name = "nougat"
 
     def is_available(self) -> tuple[bool, str]:
-        executable = shutil.which("nougat")
+        executable = resolve_cli_executable("nougat")
         if executable:
             return True, f"Found nougat CLI at {executable}"
-        return False, "nougat CLI not found in PATH"
+        return False, "nougat CLI not found on PATH or in the paper-marker environment"
 
     def convert(self, pdf_path: Path, work_dir: Path, timeout_s: int) -> CandidateResult:
         start = time.perf_counter()
         out_dir = work_dir / self.name
         out_dir.mkdir(parents=True, exist_ok=True)
-        cmd = ["nougat", str(pdf_path), "-o", str(out_dir), "--markdown"]
+        executable = resolve_cli_executable("nougat")
+        if not executable:
+            return CandidateResult(
+                route_name=self.name,
+                status="unavailable",
+                error="nougat CLI not found on PATH or in the paper-marker environment",
+                elapsed_s=time.perf_counter() - start,
+            )
+        cmd = [executable, str(pdf_path), "-o", str(out_dir), "--markdown"]
         try:
             completed = subprocess.run(
                 cmd,

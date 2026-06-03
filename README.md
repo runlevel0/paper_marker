@@ -25,6 +25,10 @@ User-space global install (tool mode):
 uv tool install ".[all,llm]"
 ```
 
+Route CLIs installed as dependencies of the tool (for example `marker`, `magic-pdf`) are
+discovered automatically from the tool environment; you do not need to add the uv tool
+`Scripts` directory to `PATH`.
+
 ## CLI
 
 List available routes:
