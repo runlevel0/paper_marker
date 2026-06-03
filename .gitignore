@@ -6,3 +6,5 @@ __pycache__/
 .ruff_cache/
 out/
 *.log
+tests/fixtures/fixture_catalog_validation.json
+tests/fixtures/pdfs/
