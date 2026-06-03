@@ -112,18 +112,26 @@ Status lifecycle: `open -> in_progress -> blocked|done`.
 ## ISSUE-006
 - ID: ISSUE-006
 - Severity: High
-- Status: open
+- Status: done
 - Owner: unassigned
 - Evidence:
   - No `LICENSE` file exists in the repo and `pyproject.toml` has no `license` field.
   - `docs/release.md` documents PyPI publishing, but publishing without a license is a legal ambiguity and violates PyPI best practice.
   - `pyproject.toml` also lacks `authors`, `classifiers`, `keywords`, and `[project.urls]`.
+  - Added MIT `LICENSE` (copyright Patrick Simon, 2026).
+  - Expanded `pyproject.toml` with `license = "MIT"`, `authors`, `keywords`, Trove classifiers (no duplicate License classifier per PEP 639), and `[project.urls]` pointing at `https://github.com/runlevel0/paper_marker`.
+  - Updated `AGENTS.md` gotcha and `CHANGELOG.md` Unreleased notes.
+  - Commit: `e41ebf1`.
 - Fix Plan:
   - Choose and add a `LICENSE` file (e.g. MIT/Apache-2.0).
   - Add `license`, `authors`, `classifiers`, `keywords`, and `[project.urls]` to `pyproject.toml`.
 - Verification:
-  - `LICENSE` present at repo root.
-  - `uv build` produces metadata with license/classifiers.
+  - `Test-Path LICENSE` -> `True`
+  - `uv run ruff check .` -> All checks passed!
+  - `uv run ruff format --check .` -> 28 files already formatted
+  - `uv run pytest -m "not integration" -q` -> `20 passed, 12 deselected in 4.84s`
+  - `uv build` -> `Successfully built dist\paper_marker-0.1.0.tar.gz` and `.whl`; wheel includes `paper_marker-0.1.0.dist-info/licenses/LICENSE`
+  - `src/paper_marker.egg-info/PKG-INFO` after build: `License-Expression: MIT`, `License-File: LICENSE`, author-email, keywords, classifiers, Project-URL entries
 - Done Criteria:
   - License file committed and referenced in package metadata.
   - PyPI page renders complete project metadata.

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- MIT `LICENSE` and complete PyPI project metadata (`license`, authors, classifiers, keywords, URLs)
 - Contributor documentation (`CONTRIBUTING.md`), environment template (`.env.example`), and this changelog
 - Full environment variable reference in README
 

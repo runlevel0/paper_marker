@@ -87,7 +87,7 @@ This repo uses a file-based ledger instead of GitHub issues: **`docs/implementat
 
 - **Do not commit build artifacts:** `*.egg-info/` and `build/` are gitignored; run `uv build`
   locally without committing those outputs.
-- **No `LICENSE`** and thin `pyproject.toml` metadata — do not publish to PyPI until fixed (ISSUE-006).
+- **PyPI metadata** — `LICENSE`, `license`, authors, classifiers, and `[project.urls]` are in `pyproject.toml`; bump version and tag per `docs/release.md` before publishing.
 - **Windows + `ProcessPoolExecutor`:** workers re-import the package and use spawn semantics; keep
   worker arguments picklable (current code passes strings/paths). Heavy ML deps make worker startup slow.
 - **Folder name `resources/`** is canonical (ISSUE-016 resolved).
